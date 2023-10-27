@@ -1,0 +1,4 @@
+class WishlistInitialParams {
+
+const WishlistInitialParams();
+}

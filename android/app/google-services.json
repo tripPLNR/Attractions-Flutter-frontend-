@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "727690186741",
+    "project_id": "tripplaner-5458e",
+    "storage_bucket": "tripplaner-5458e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727690186741:android:31b69d01fea53782e6dabc",
+        "android_client_info": {
+          "package_name": "com.app.triplaner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWJQiwn-KZ_QlUOJS-S0siQxfRsDOZvGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

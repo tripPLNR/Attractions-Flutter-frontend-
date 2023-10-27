@@ -1,0 +1,4 @@
+class HomeInitialParams {
+
+const HomeInitialParams();
+}

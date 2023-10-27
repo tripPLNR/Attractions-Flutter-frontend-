@@ -1,0 +1,4 @@
+class BottomNavigationInitialParams {
+
+const BottomNavigationInitialParams();
+}

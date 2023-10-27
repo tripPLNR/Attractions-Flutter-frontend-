@@ -1,0 +1,4 @@
+class SearchInitialParams {
+
+const SearchInitialParams();
+}
