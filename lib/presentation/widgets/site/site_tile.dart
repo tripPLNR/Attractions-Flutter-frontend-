@@ -18,10 +18,11 @@ class SiteTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double height=160.h;
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 140.h,
+        height: height,
         padding: EdgeInsets.all(8.h),
         margin: EdgeInsets.only(bottom: 13.h),
         decoration: BoxDecoration(
@@ -48,7 +49,7 @@ class SiteTile extends StatelessWidget {
               children: [
                 CustomCacheImage(
                   imgUrl:"${site.images?.first.toJson().getImageUrl()}",
-                  height: 123.w,
+                  height: height,
                   radius: 12.r,
                   width: 123.w,
                 ),
@@ -83,13 +84,6 @@ class SiteTile extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Text(
-                    "Free cancellation",
-                    style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Theme.of(context).colorScheme.primary),
-                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -111,6 +105,15 @@ class SiteTile extends StatelessWidget {
                           )
                         ],
                       ),
+                      SizedBox(height: 4.h,),
+                      Text(
+                        "Free cancellation",
+                        style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                      SizedBox(height: 4.h,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

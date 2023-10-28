@@ -8,13 +8,13 @@ class RatingJson {
 
   RatingJson.fromJson(Map<String, dynamic> json) {
     ratings = json['ratings'];
-    reviewersCount = json['ReviewersCount'];
+    reviewersCount = json['reviewersCount'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['ratings'] = this.ratings;
-    data['ReviewersCount'] = this.reviewersCount;
+    data['reviewersCount'] = this.reviewersCount;
     return data;
   }
 

@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 class City extends Equatable{
   String? id;
   String? name;
+  String? country;
   String? thumbnail;
   String? cityId;
   String? createdAt;
@@ -11,6 +12,8 @@ class City extends Equatable{
   City(
       {this.id,
         this.name,
+        this.country,
+
         this.thumbnail,
         this.cityId,
         this.createdAt,
@@ -19,6 +22,7 @@ class City extends Equatable{
   City.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
+    country = json['country'];
     thumbnail = json['thumbnail'];
     cityId = json['cityId'];
     createdAt = json['created_at'];
@@ -29,6 +33,7 @@ class City extends Equatable{
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
+    data['country'] = this.country;
     data['thumbnail'] = this.thumbnail;
     data['cityId'] = this.cityId;
     data['created_at'] = this.createdAt;
@@ -39,6 +44,7 @@ class City extends Equatable{
   City.empty() {
     id = "0000";
     name = "This city";
+    country="Country";
     thumbnail ="https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg";
     cityId ="00000";
     createdAt = "000000";

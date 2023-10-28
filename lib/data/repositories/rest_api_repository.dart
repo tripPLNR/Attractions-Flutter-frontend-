@@ -56,32 +56,44 @@ class RestAPIRepository implements DatabaseRepository {
   }
 
   @override
-  Future<List<Site>> getAttractionsWorldWide() async {
-    var response = await networkRepository.get(APIEndpoint.getAttractionWorldWide);
+  Future<List<Site>> getAttractionsWorldWide({int take=10,int skip=0}) async {
+    var response = await networkRepository.get(APIEndpoint.getAttractionWorldWide,parameters: {
+      'take':take.toString(),
+      'skip':skip.toString(),
+    });
     return (response as List)
         .map((e) => SiteJson.fromJson(e).toDomain())
         .toList();
   }
 
   @override
-  Future<List<Site>> getMoreToExplore() async {
-    var response = await networkRepository.get(APIEndpoint.getExploreMore);
+  Future<List<Site>> getMoreToExplore({int take=10,int skip=0}) async {
+    var response = await networkRepository.get(APIEndpoint.getExploreMore,parameters:{
+      'take':take.toString(),
+      'skip':skip.toString(),
+    });
     return (response as List)
         .map((e) => SiteJson.fromJson(e).toDomain())
         .toList();
   }
 
   @override
-  Future<List<Site>> getSiteSeeingTours() async {
-    var response = await networkRepository.get(APIEndpoint.getSiteSeeingTours);
+  Future<List<Site>> getSiteSeeingTours({int take=10,int skip=0}) async {
+    var response = await networkRepository.get(APIEndpoint.getSiteSeeingTours,parameters: {
+      'take':take.toString(),
+      'skip':skip.toString(),
+    });
     return (response as List)
         .map((e) => SiteJson.fromJson(e).toDomain())
         .toList();
   }
 
   @override
-  Future<List<Site>> getWaterAdventures() async {
-    var response = await networkRepository.get(APIEndpoint.getWaterAdventures);
+  Future<List<Site>> getWaterAdventures({int take=10,int skip=0}) async {
+    var response = await networkRepository.get(APIEndpoint.getWaterAdventures,parameters: {
+      'take':take.toString(),
+      'skip':skip.toString(),
+    });
     return (response as List)
         .map((e) => SiteJson.fromJson(e).toDomain())
         .toList();

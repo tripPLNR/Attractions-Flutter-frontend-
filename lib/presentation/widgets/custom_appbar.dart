@@ -9,12 +9,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? action;
   final bool hideBack;
-
+  final int? actionFlex;
   const CustomAppBar({
     super.key,
     required this.title,
     this.action,
     this.hideBack=false,
+    this.actionFlex=1,
+
   });
 
   @override
@@ -23,8 +25,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: preferredSize.height,
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
+      // height: preferredSize.height,
+      padding: EdgeInsets.symmetric(horizontal: 24.w).copyWith(top: MediaQuery.of(context).viewPadding.top),
       decoration: BoxDecoration(
           gradient: AppStyle.linearGradient(),
           borderRadius: BorderRadius.only(
@@ -66,7 +68,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           Expanded(
-            flex: 1,
+            flex: actionFlex??1,
             child: action == null
                 ? const SizedBox()
                 : Align(

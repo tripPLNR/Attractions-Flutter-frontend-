@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:triplaner/util/app_assets.dart';
 
-class CustomCacheImage extends StatelessWidget {
+class CustomCacheImage extends StatefulWidget {
   final String imgUrl;
   final double? width;
   final double? height;
@@ -20,24 +20,29 @@ class CustomCacheImage extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<CustomCacheImage> createState() => _CustomCacheImageState();
+}
+
+class _CustomCacheImageState extends State<CustomCacheImage> {
+  @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: borderRadius ?? BorderRadius.circular(radius ?? 0),
+      borderRadius: widget.borderRadius ?? BorderRadius.circular(widget.radius ?? 0),
       child: CachedNetworkImage(
-        imageUrl: imgUrl,
-        height: height,
-        width: width,
+        imageUrl: widget.imgUrl.isEmpty?"https://i0.wp.com/thinkfirstcommunication.com/wp-content/uploads/2022/05/placeholder-1-1.png?fit=1200%2C800&ssl=1":widget.imgUrl,
+        height: widget.height,
+        width: widget.width,
         fit: BoxFit.cover,
-        placeholder: (child, url) => SvgPicture.asset(
+        progressIndicatorBuilder: (child, url,downloadProgress) => SvgPicture.asset(
           AppAssets.placeHolderImage,
-          height: height,
-          width: width,
+          height: widget.height,
+          width: widget.width,
           fit: BoxFit.cover,
         ),
         errorWidget: (child, url,obj) => SvgPicture.asset(
           AppAssets.placeHolderImage,
-          height: height,
-          width: width,
+          height: widget.height,
+          width: widget.width,
           fit: BoxFit.cover,
         ),
       ),

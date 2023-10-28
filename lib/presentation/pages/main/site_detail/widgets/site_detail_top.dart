@@ -20,7 +20,7 @@ class SiteDetailTop extends StatelessWidget {
           images: images,
         ),
         Padding(
-          padding: AppConstant.screenPadding.copyWith(top: 16.h),
+          padding: AppConstant.screenPadding.copyWith(top: MediaQuery.of(context).viewPadding.top+16.h),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

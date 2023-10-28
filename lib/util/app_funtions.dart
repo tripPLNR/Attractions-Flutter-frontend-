@@ -2,6 +2,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
+import 'package:triplaner/util/app_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppFunctions {
@@ -45,4 +49,21 @@ class AppFunctions {
     return base64Image;
   }
 
+  static transparentStatusBar({bool blackText=false}) async {
+  SystemChrome.setSystemUIOverlayStyle(
+       SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: blackText?Brightness.dark:Brightness.light
+        //color set to transperent or set your own color
+      )
+  );
+  }
+
+
+
+
+// static primaryStatusBar() async {
+  //   await FlutterStatusbarcolor.setStatusBarColor(AppColors.primaryColor);
+  //   await FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
+  // }
 }

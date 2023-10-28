@@ -18,8 +18,8 @@ class AppStyle {
       );
 
   static TextStyle headingH2(BuildContext context) => TextStyle(
-      fontSize: 21.sp,
-      fontWeight: FontWeight.w500,
+      fontSize: 22.sp,
+      fontWeight: FontWeight.bold,
       color: Theme.of(context).colorScheme.onBackground,
   );
 

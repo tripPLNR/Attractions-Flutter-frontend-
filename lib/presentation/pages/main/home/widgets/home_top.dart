@@ -12,7 +12,6 @@ class HomeTop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return   Container(
-      height: 180.h,
       width: 1.sw,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.only(bottomLeft: Radius.circular(13.r),bottomRight: Radius.circular(13.r)),
@@ -27,7 +26,7 @@ class HomeTop extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 26.h,),
+          SizedBox(height: 53.h,),
           Text.rich(
             TextSpan(
               children: [
@@ -64,7 +63,8 @@ class HomeTop extends StatelessWidget {
             label: "",
             hint: "Search Destinations, Activities......",
             bottomPadding: 0,
-          )
+          ),
+          SizedBox(height: 28.h,),
         ],
       ),
     );

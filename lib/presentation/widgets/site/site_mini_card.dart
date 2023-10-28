@@ -25,7 +25,7 @@ class SiteMiniCard extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: gridviewMode ? 164.h : 244.w,
+        width: gridviewMode ? 164.h : 280.w,
         padding: EdgeInsets.all(8.h),
         margin: gridviewMode
             ? EdgeInsets.all(6.h)

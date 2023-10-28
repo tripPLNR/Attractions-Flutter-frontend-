@@ -24,9 +24,10 @@ class NearbyAttractionHomeTourButton extends StatelessWidget {
       ),
       child: Center(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             customWidget(isPrimary: true,assetPath: AppAssets.nearbyAttraction,title: "Nearby Attractions",context:context,onTap: onNearbyAttractionTap),
+            SizedBox(width: 16.w,),
             customWidget(assetPath: AppAssets.guidedPrivateTour,title: "Guided & Private tours",context:context,onTap: onGuidedTourTap),
 
           ],
@@ -41,8 +42,9 @@ class NearbyAttractionHomeTourButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: 146.w,
+        // width: 146.w,
         height: 46.h,
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.r),
             color: isPrimary?Theme.of(context).colorScheme.tertiary:Theme.of(context).colorScheme.surface,
@@ -54,10 +56,10 @@ class NearbyAttractionHomeTourButton extends StatelessWidget {
         child: Center(child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(assetPath,height: 21.h,width: 21.w,),
+            SvgPicture.asset(assetPath,height: 24.h,width: 24.w,),
             SizedBox(width: 8.w,),
             SizedBox(
-              width: 84.w,
+              width: 95.w,
               child: Text(title,
                 style: TextStyle(
                   fontSize: 12.sp,

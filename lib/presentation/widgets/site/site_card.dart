@@ -55,6 +55,7 @@ class SiteCard extends StatelessWidget {
                     CustomImageSlider(
                         height: 198.h,
                         width: 1.sw,
+                        maximumDotCounts: 3,
                         borderRadius: BorderRadius.circular(12.r),
                           images: site.images
                           ?.map((e) => e.toJson().getImageUrl()?? "")

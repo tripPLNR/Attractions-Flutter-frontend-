@@ -59,7 +59,7 @@ class _SiteDetailState extends State<SiteDetailPage> {
       debugPrint("CURRENT POSITION ==> : $currentScrollPosition");
 
       /// update appbar code
-      if (currentScrollPosition >= 110) {
+      if (currentScrollPosition >= 160) {
         debugPrint("changed status of appbar :");
         cubit.updateAppbarView(true);
       } else {
@@ -79,195 +79,209 @@ class _SiteDetailState extends State<SiteDetailPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        // backgroundColor: Theme.of(context).colorScheme.background,
-        body: BlocBuilder<SiteDetailCubit, SiteDetailState>(
-            bloc: cubit,
-            builder: (context, state) {
-              return CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  SliverAppBar(
-                    elevation: 0,
-                    pinned: true,
-                    backgroundColor: Theme.of(context).colorScheme.background,
-                    expandedHeight: 250.h,
-                    collapsedHeight: 100.h,
-                    automaticallyImplyLeading: false,
-                    floating: false,
-                    flexibleSpace: state.showAppbar
-                        ? CustomAppBar(title: '${state.site.title}')
-                        : SiteDetailTop(
-                            images: state.site.images
-                                    ?.map((e) => e.toJson().getImageUrl() ?? "")
-                                    .toList() ??
-                                [],
-                          ),
+    return Scaffold(
+      body: BlocBuilder<SiteDetailCubit, SiteDetailState>(
+          bloc: cubit,
+          builder: (context, state) {
+            return CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                SliverAppBar(
+                  elevation: 0,
+                  pinned: true,
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                  expandedHeight: 280.h,
+                  collapsedHeight: 100.h,
+                  automaticallyImplyLeading: false,
+                  floating: false,
+                  flexibleSpace: state.showAppbar
+                      ? CustomAppBar(
+                          title: '${state.site.title}',
+                          actionFlex: 3,
+                          action: [
+                            SvgPicture.asset(
+                              AppAssets.circularShare,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                            SizedBox(width: 8.w,),
+                            SvgPicture.asset(
+                              AppAssets.circularBookmark,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ],
+                        )
+                      : SiteDetailTop(
+                          images: state.site.images
+                                  ?.map((e) => e.toJson().getImageUrl() ?? "")
+                                  .toList() ??
+                              [],
+                        ),
+                ),
+                SliverToBoxAdapter(
+                  child: SiteDetailInfo(
+                    site: state.site,
                   ),
-                  SliverToBoxAdapter(
-                    child: SiteDetailInfo(
-                      site: state.site,
-                    ),
+                ),
+                SliverAppBar(
+                  elevation: 0.0,
+                  pinned: true,
+                  primary: false,
+                  automaticallyImplyLeading: false,
+                  // backgroundColor: Colors.transparent,
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                  titleTextStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.onBackground),
+                  titleSpacing: 0,
+                  title: SiteDetailMenu(
+                    menus: const [
+                      "Overview",
+                      "Includes",
+                      "Excludes",
+                      "Review"
+                    ],
+                    selectedIndex: state.selectedMenuIndex,
+                    onTap: (index) async {
+                      cubit.updateSelectedMenu(index);
+                      _navigateToTabSection(index);
+                    },
                   ),
-                  SliverAppBar(
-                    elevation: 0.0,
-                    pinned: true,
-                    primary: false,
-                    automaticallyImplyLeading: false,
-                   // backgroundColor: Colors.transparent,
-                    backgroundColor: Theme.of(context).colorScheme.background,
-                    titleTextStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.onBackground),
-                    titleSpacing: 0,
-                    title: SiteDetailMenu(
-                      menus: const [
-                        "Overview",
-                        "Includes",
-                        "Excludes",
-                        "Review"
-                      ],
-                      selectedIndex: state.selectedMenuIndex,
-                      onTap: (index) async {
-                        cubit.updateSelectedMenu(index);
-                        _navigateToTabSection(index);
-                      },
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: AppConstant.screenPadding,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              OverviewWidget(
-                                site: state.site,
-                              ),
-                              const Divider(
-                                thickness: 1,
-                                height: 0,
-                              ),
-                              IncludesWidget(
-                                site: state.site,
-                              ),
-                              const Divider(
-                                thickness: 1,
-                                height: 0,
-                              ),
-                              ExcludesWidget(
-                                site: state.site,
-                              ),
-                              const Divider(
-                                thickness: 1,
-                                height: 0,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 22.h),
-                                child: Text(
-                                  "This product is offered by our partner ${state.site.provider} ",
-                                  style: AppStyle.headingH2(context),
-                                ),
-                              ),
-                              const Divider(
-                                thickness: 1,
-                                height: 0,
-                              ),
-                              RatingWidget(
-                                site: state.site,
-                              ),
-                              const Divider(
-                                thickness: 1,
-                                height: 0,
-                              ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton(onPressed: (){}, child: Text("See all reviews",style: TextStyle(
-                                  letterSpacing: 0,
-                                  color: Theme.of(context).primaryColor
-                                ),)),
-                              ),
-
-                              /// TODO : SHOW ONLY 2 REVIEWS THERE
-                              const ReviewWidget(),
-                              const ReviewWidget(),
-                              SizedBox(
-                                height: 12.h,
-                              ),
-                              Text(
-                                "Cancellation policy",
+                ),
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: AppConstant.screenPadding,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            OverviewWidget(
+                              site: state.site,
+                            ),
+                            const Divider(
+                              thickness: 1,
+                              height: 0,
+                            ),
+                            IncludesWidget(
+                              site: state.site,
+                            ),
+                            const Divider(
+                              thickness: 1,
+                              height: 0,
+                            ),
+                            ExcludesWidget(
+                              site: state.site,
+                            ),
+                            const Divider(
+                              thickness: 1,
+                              height: 0,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 22.h),
+                              child: Text(
+                                "This product is offered by our partner ${state.site.provider} ",
                                 style: AppStyle.headingH2(context),
                               ),
-                              SizedBox(
-                                height: 10.h,
-                              ),
-                              Text(
-                                "${state.site.cancellationPolicy?.description}",
-                                style: AppStyle.headingH3(context),
-                              ),
-                              SizedBox(
-                                height: 12.h,
-                              ),
-                              const Divider(
-                                thickness: 1,
-                                height: 0,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 22.h),
-                                child: Text(
-                                  "Similar experiences",
-                                  style: AppStyle.headingH2(context),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 335.h,
-                          child: Skeletonizer(
-                            enabled: state.loadingSimilarExperiences,
-                            child: ListView.builder(
-                              itemCount: state.loadingSimilarExperiences
-                                  ? 5
-                                  : state.similarExperiences.length,
-                              scrollDirection: Axis.horizontal,
-                              padding: EdgeInsets.symmetric(horizontal: 8.w),
-                              itemBuilder: (context, index) {
-                                Site site = state.loadingSimilarExperiences
-                                    ? Site.empty()
-                                    : state.similarExperiences[index];
-                                return SiteMiniCard(
-                                  site: site,
-                                  onTap: () {
-                                    // scrollToPosition(0);
-                                    cubit.similarExperienceTap(site);
-                                  },
-                                );
-                              },
                             ),
+                            const Divider(
+                              thickness: 1,
+                              height: 0,
+                            ),
+                            RatingWidget(
+                              site: state.site,
+                            ),
+                            const Divider(
+                              thickness: 1,
+                              height: 0,
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                  onPressed: () {},
+                                  child: Text(
+                                    "See all reviews",
+                                    style: TextStyle(
+                                        letterSpacing: 0,
+                                        color:
+                                            Theme.of(context).primaryColor),
+                                  )),
+                            ),
+
+                            /// TODO : SHOW ONLY 2 REVIEWS THERE
+                            const ReviewWidget(),
+                            const ReviewWidget(),
+                            SizedBox(
+                              height: 12.h,
+                            ),
+                            Text(
+                              "Cancellation policy",
+                              style: AppStyle.headingH2(context),
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            Text(
+                              "${state.site.cancellationPolicy?.description}",
+                              style: AppStyle.headingH3(context),
+                            ),
+                            SizedBox(
+                              height: 12.h,
+                            ),
+                            const Divider(
+                              thickness: 1,
+                              height: 0,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 22.h),
+                              child: Text(
+                                "Similar experiences",
+                                style: AppStyle.headingH2(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 335.h,
+                        child: Skeletonizer(
+                          enabled: state.loadingSimilarExperiences,
+                          child: ListView.builder(
+                            itemCount: state.loadingSimilarExperiences
+                                ? 5
+                                : state.similarExperiences.length,
+                            scrollDirection: Axis.horizontal,
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            itemBuilder: (context, index) {
+                              Site site = state.loadingSimilarExperiences
+                                  ? Site.empty()
+                                  : state.similarExperiences[index];
+                              return SiteMiniCard(
+                                site: site,
+                                onTap: () {
+                                  // scrollToPosition(0);
+                                  cubit.similarExperienceTap(site);
+                                },
+                              );
+                            },
                           ),
                         ),
-                        SizedBox(
-                          height: 16.h,
-                        ),
-                        Padding(
-                          padding: AppConstant.screenPadding,
-                          child: CustomButton(
-                              text: "Check Availability", action: () {}),
-                        ),
-                        SizedBox(
-                          height: 16.h,
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              );
-            }),
+                      ),
+                      SizedBox(
+                        height: 100.h,
+                      ),
+
+                    ],
+                  ),
+                )
+              ],
+            );
+          }),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: AppConstant.screenPadding.copyWith(bottom: 16.h,top: 10.h),
+        child: CustomButton(
+            text: "Check Availability", action: () {}),
       ),
     );
   }

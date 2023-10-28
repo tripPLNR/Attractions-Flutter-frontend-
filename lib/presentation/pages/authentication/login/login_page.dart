@@ -10,6 +10,7 @@ import 'package:triplaner/presentation/widgets/custom_loader.dart';
 import 'package:triplaner/presentation/widgets/custom_textfield.dart';
 import 'package:triplaner/util/app_assets.dart';
 import 'package:triplaner/util/app_constant.dart';
+import 'package:triplaner/util/app_funtions.dart';
 import 'package:triplaner/util/app_style.dart';
 import 'package:triplaner/util/app_theme.dart';
 import 'login_cubit.dart';
@@ -40,12 +41,13 @@ class _LoginState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Image.asset(AppAssets.loginTop),
-            BlocBuilder<LoginCubit, LoginState>(
+    return Scaffold(
+      body: Stack(
+        children: [
+          Image.asset(AppAssets.loginTop),
+          Padding(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
+            child: BlocBuilder<LoginCubit, LoginState>(
                 bloc: cubit,
                 builder: (context, state) {
                   return IgnorePointer(
@@ -151,9 +153,9 @@ class _LoginState extends State<LoginPage> {
                       ),
                     ),
                   );
-                })
-          ],
-        ),
+                }),
+          )
+        ],
       ),
     );
   }

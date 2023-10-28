@@ -10,8 +10,8 @@ class CustomImageSlider extends StatefulWidget {
   double? height;
   double? width;
   BorderRadius? borderRadius;
-
-  CustomImageSlider({Key? key, required this.images,this.height,this.width,this.borderRadius}) : super(key: key);
+  int? maximumDotCounts;
+  CustomImageSlider({Key? key, required this.images,this.height,this.width,this.borderRadius,this.maximumDotCounts}) : super(key: key);
 
   @override
   State<CustomImageSlider> createState() => _CustomImageSliderState();
@@ -23,13 +23,13 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height:widget.height??280.h,
+      height:widget.height??320.h,
       width:widget.width?? 1.sw,
       child: Stack(
         children: [
           CarouselSlider(
             options: CarouselOptions(
-                height: widget.height??280.h,
+                height: widget.height??320.h,
                 // aspectRatio: 16 / 9,
                  viewportFraction: 1,
                 initialPage: 0,
@@ -81,8 +81,8 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
                   ),
                   child: AnimatedSmoothIndicator(
                     activeIndex: pageIndex,
-                    count: widget.images.length,
-                    // count: widget.images.length>5?5:widget.images.length,
+                   // count: widget.images.length,
+                     count: widget.maximumDotCounts!=null?(widget.images.length>widget.maximumDotCounts!?widget.maximumDotCounts!:widget.images.length):widget.images.length,
                     effect: JumpingDotEffect(
                         activeDotColor: Theme.of(context).colorScheme.primary,
                         dotColor: Theme.of(context).colorScheme.onPrimary,

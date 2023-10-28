@@ -29,11 +29,14 @@ class _SplashState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Scaffold(
+    return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
-        child: SvgPicture.asset(AppAssets.logo,height: 97.h,),
+    child: SvgPicture.asset(
+      AppAssets.logo,
+      height: 97.h,
+    ),
       ),
-    ));
+    );
   }
 }
