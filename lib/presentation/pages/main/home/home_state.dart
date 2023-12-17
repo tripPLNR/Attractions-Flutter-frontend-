@@ -7,6 +7,8 @@ import 'home_initial_params.dart';
 class HomeState {
   final bool loading;
   final bool stackLoading;
+  final bool showAppBar;
+
 
   final bool loadingPopularGateways;
   final List<City> cities;
@@ -26,9 +28,13 @@ class HomeState {
   final bool loadingMoreToExplore;
   final List<Site> moreToExplore;
 
+  final List<Site> wishListSites;
+
+
   const HomeState({
     required this.loading,
     required this.stackLoading,
+    required this.showAppBar,
 
     required this.loadingPopularGateways,
     required this.cities,
@@ -42,6 +48,8 @@ class HomeState {
     required this.waterAdventures,
     required this.loadingMoreToExplore,
     required this.moreToExplore,
+    required this.wishListSites,
+
 
   });
 
@@ -49,6 +57,7 @@ class HomeState {
       const HomeState(
         loading: false,
         stackLoading: false,
+        showAppBar:false,
         loadingPopularGateways: false,
         cities: [],
         loadingTopActivities: false,
@@ -61,12 +70,14 @@ class HomeState {
         waterAdventures: [],
         loadingMoreToExplore: false,
         moreToExplore: [],
+        wishListSites: [],
 
       );
 
   HomeState copyWith({
     bool? loading,
     bool? stackLoading,
+    bool? showAppBar,
 
     bool? loadingPopularGateways,
     List<City>? cities,
@@ -81,13 +92,15 @@ class HomeState {
 
     bool? loadingMoreToExplore,
     List<Site>? moreToExplore,
-
+    List<Site>? wishListSites,
 
 
   }) =>
       HomeState(
         loading: loading ?? this.loading,
         stackLoading: stackLoading ?? this.stackLoading,
+        showAppBar: showAppBar ?? this.showAppBar,
+
         loadingPopularGateways:
             loadingPopularGateways ?? this.loadingPopularGateways,
         cities: cities ?? this.cities,
@@ -101,5 +114,7 @@ class HomeState {
         waterAdventures: waterAdventures??this.waterAdventures,
         loadingMoreToExplore: loadingMoreToExplore??this.loadingMoreToExplore,
         moreToExplore: moreToExplore??this.moreToExplore,
+        wishListSites: wishListSites??this.wishListSites,
+
       );
 }

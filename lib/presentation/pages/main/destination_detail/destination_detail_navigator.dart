@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:triplaner/presentation/pages/authentication/login/login_navigator.dart';
+import 'package:triplaner/presentation/pages/confirmation/confirmation_navigator.dart';
 import 'package:triplaner/presentation/pages/main/activites/activities_navigator.dart';
+import 'package:triplaner/presentation/pages/main/activites/calendar/calendar_navigator.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/site_detail_navigator.dart';
 import '../../../../../navigation/app_navigator.dart';
 import '../../../../../util/dependency/app_dependency.dart';
@@ -7,7 +10,7 @@ import 'destination_detail_page.dart';
 import 'destination_detail_cubit.dart';
 import 'destination_detail_initial_params.dart';
 
-class DestinationDetailNavigator with SiteDetailRoute,ActivitiesRoute {
+class DestinationDetailNavigator with SiteDetailRoute,ActivitiesRoute,ConfirmationRoute,LoginRoute,CalendarRoute {
   DestinationDetailNavigator(this.navigator);
 
   @override

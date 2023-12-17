@@ -1,19 +1,23 @@
+import 'package:equatable/equatable.dart';
+import 'package:triplaner/domain/entities/location.dart';
+
 import 'cancellation_policy.dart';
 import 'inclusion.dart';
 import 'image.dart';
 import 'rating.dart';
 import 'duration.dart';
+import 'variant.dart';
 
-class Site {
+class Site extends Equatable {
   String? id;
   String? productCode;
   String? provider;
   String? title;
   String? description;
-  double? basePrice;
+  int? basePrice;
   String? currency;
   Duration? duration;
-  String? location;
+  Location? location;
   List<Image>? images;
   List<Inclusion>? inclusions;
   List<Inclusion>? exclusions;
@@ -25,22 +29,22 @@ class Site {
 
   Site(
       {this.id,
-        this.productCode,
-        this.provider,
-        this.title,
-        this.description,
-        this.basePrice,
-        this.currency,
-        this.duration,
-        this.location,
-        this.images,
-        this.inclusions,
-        this.exclusions,
-        this.productUrl,
-        this.ratings,
-        this.cancellationPolicy,
-        this.createdAt,
-        this.updatedAt});
+      this.productCode,
+      this.provider,
+      this.title,
+      this.description,
+      this.basePrice,
+      this.currency,
+      this.duration,
+      this.location,
+      this.images,
+      this.inclusions,
+      this.exclusions,
+      this.productUrl,
+      this.ratings,
+      this.cancellationPolicy,
+      this.createdAt,
+      this.updatedAt});
 
   Site.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -53,7 +57,9 @@ class Site {
     duration = json['duration'] != null
         ? new Duration.fromJson(json['duration'])
         : null;
-    location = json['location'];
+    location =
+        json['location'] != null ? Location.fromJson(json['duration']) : null;
+
     if (json['images'] != null) {
       images = <Image>[];
       json['images'].forEach((v) {
@@ -74,7 +80,7 @@ class Site {
     }
     productUrl = json['productUrl'];
     ratings =
-    json['ratings'] != null ? new Rating.fromJson(json['ratings']) : null;
+        json['ratings'] != null ? new Rating.fromJson(json['ratings']) : null;
     cancellationPolicy = json['cancellationPolicy'] != null
         ? new CancellationPolicy.fromJson(json['cancellationPolicy'])
         : null;
@@ -82,17 +88,16 @@ class Site {
     updatedAt = json['updated_at'];
   }
 
-
   Site.empty() {
     id = "00000";
-    productCode ="00000";
+    productCode = "00000";
     provider = "00000";
     title = "00000";
     description = "00000";
-    basePrice =00000.0;
+    basePrice = 0;
     currency = "00000";
-    duration =Duration.empty();
-    location = "";
+    duration = Duration.empty();
+    location = Location.empty();
     images = <Image>[Image.empty()];
     inclusions = <Inclusion>[Inclusion.empty()];
     exclusions = <Inclusion>[Inclusion.empty()];
@@ -115,7 +120,9 @@ class Site {
     if (this.duration != null) {
       data['duration'] = this.duration!.toJson();
     }
-    data['location'] = this.location;
+    if (this.location != null) {
+      data['location'] = this.location!.toJson();
+    }
     if (this.images != null) {
       data['images'] = this.images!.map((v) => v.toJson()).toList();
     }
@@ -137,8 +144,28 @@ class Site {
     return data;
   }
 
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+        id,
+        productCode,
+        provider,
+        title,
+        description,
+        basePrice,
+        currency,
+        // duration,
+        // location,
+        // images,
+        // inclusions,
+        // exclusions,
+        // ratings,
+        // cancellationPolicy,
+        // createdAt,
+        // updatedAt,
+      ];
 
+  bool isRefundAvailable(){
+    return cancellationPolicy?.description?.contains("full refund")??false;
+  }
 }
-
-
-

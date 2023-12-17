@@ -1,9 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'custom_cache_image.dart';
+import 'custom_page_indicator.dart';
 
 class CustomImageSlider extends StatefulWidget {
   List<String> images;
@@ -11,43 +11,50 @@ class CustomImageSlider extends StatefulWidget {
   double? width;
   BorderRadius? borderRadius;
   int? maximumDotCounts;
-  CustomImageSlider({Key? key, required this.images,this.height,this.width,this.borderRadius,this.maximumDotCounts}) : super(key: key);
+
+  CustomImageSlider(
+      {Key? key,
+      required this.images,
+      this.height,
+      this.width,
+      this.borderRadius,
+      this.maximumDotCounts})
+      : super(key: key);
 
   @override
   State<CustomImageSlider> createState() => _CustomImageSliderState();
 }
 
 class _CustomImageSliderState extends State<CustomImageSlider> {
+  int pageIndex = 0;
 
-  int pageIndex=0;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height:widget.height??320.h,
-      width:widget.width?? 1.sw,
+      height: widget.height ?? 320.h,
+      width: widget.width ?? 1.sw,
       child: Stack(
         children: [
           CarouselSlider(
             options: CarouselOptions(
-                height: widget.height??320.h,
+                height: widget.height ?? 320.h,
                 // aspectRatio: 16 / 9,
-                 viewportFraction: 1,
+                viewportFraction: 1,
                 initialPage: 0,
-                enableInfiniteScroll: true,
+                enableInfiniteScroll: false,
                 reverse: false,
                 autoPlay: false,
                 autoPlayInterval: const Duration(seconds: 3),
                 autoPlayAnimationDuration: const Duration(milliseconds: 800),
                 autoPlayCurve: Curves.fastOutSlowIn,
                 enlargeCenterPage: true,
-                 enlargeFactor: 0.1,
+                enlargeFactor: 0.1,
                 scrollDirection: Axis.horizontal,
-                onPageChanged: (index,reason){
+                onPageChanged: (index, reason) {
                   setState(() {
-                    pageIndex=index;
+                    pageIndex = index;
                   });
-                }
-            ),
+                }),
             items: widget.images.map((imgUrl) {
               return Builder(
                 builder: (BuildContext context) {
@@ -56,42 +63,26 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
                     child: CustomCacheImage(
                       imgUrl: imgUrl,
                       width: widget.width,
-                      borderRadius: widget.borderRadius??BorderRadius.only(
-                        bottomLeft: Radius.circular(12.r),
-                        bottomRight: Radius.circular(12.r),
-                      ),
+                      borderRadius: widget.borderRadius ??
+                          BorderRadius.only(
+                            bottomLeft: Radius.circular(12.r),
+                            bottomRight: Radius.circular(12.r),
+                          ),
                     ),
                   );
                 },
               );
             }).toList(),
           ),
-
           Positioned.fill(
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: EdgeInsets.only(bottom: 15.h),
-                child: Container(
-                  padding: EdgeInsets.all(5.h),
-                  margin: EdgeInsets.symmetric(horizontal: 5.w),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.background.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(50.r),
-                  ),
-                  child: AnimatedSmoothIndicator(
-                    activeIndex: pageIndex,
-                   // count: widget.images.length,
-                     count: widget.maximumDotCounts!=null?(widget.images.length>widget.maximumDotCounts!?widget.maximumDotCounts!:widget.images.length):widget.images.length,
-                    effect: JumpingDotEffect(
-                        activeDotColor: Theme.of(context).colorScheme.primary,
-                        dotColor: Theme.of(context).colorScheme.onPrimary,
-                        spacing: 10,
-                        dotHeight: 10.h,
-                        dotWidth: 10.h
-                    ),
-                  ),
-                ),
+                child: CustomPageIndicator(
+                  currentIndex: pageIndex,
+                  itemCount: widget.images.length,
+                )
               ),
             ),
           )

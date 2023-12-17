@@ -11,6 +11,7 @@ class ActivityWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return GestureDetector(
       onTap: onTap,
       child: Padding(
@@ -24,11 +25,11 @@ class ActivityWidget extends StatelessWidget {
               height: 4.h,
             ),
             SizedBox(
-              width: 66.w,
+              width: 70.w,
               child: Text(
                 topActivity.name??"N/A",
                 style: TextStyle(
-                  fontSize: 11.sp,
+                  fontSize: 10.sp,
                   fontWeight: FontWeight.w800,
                 ),
                 textAlign: TextAlign.center,

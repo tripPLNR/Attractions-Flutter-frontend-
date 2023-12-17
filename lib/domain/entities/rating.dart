@@ -10,8 +10,8 @@ class Rating {
   }
 
   Rating.empty() {
-    ratings = 000;
-    reviewersCount = 0000;
+    ratings = 5;
+    reviewersCount = 1234;
   }
 
   Map<String, dynamic> toJson() {

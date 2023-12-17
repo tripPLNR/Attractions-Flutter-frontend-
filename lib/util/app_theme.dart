@@ -12,10 +12,11 @@ class AppTheme {
   static ThemeData lightTheme() {
     return ThemeData(
       primaryColor: AppColors.primaryColor,
+      useMaterial3: false,
       colorScheme: ColorScheme(
         brightness: Brightness.light,
         background: AppColors.scaffoldColor,
-        onBackground: AppColors.blackColor,
+        onBackground: AppColors.onBackgroundColor,
         primary: AppColors.primaryColor,
         onPrimary: AppColors.onPrimaryColor,
         secondary: AppColors.secondaryColor,
@@ -27,6 +28,10 @@ class AppTheme {
         tertiary: AppColors.tertiaryColor,
         onTertiary: AppColors.onTertiaryColor,
         tertiaryContainer: AppColors.greyColor
+      ),
+      dividerColor: AppColors.dividerColor,
+      dividerTheme:  DividerThemeData(
+        color: AppColors.dividerColor.withOpacity(0.2),
       ),
       scaffoldBackgroundColor: AppColors.whiteColor,
       fontFamily: mulish,

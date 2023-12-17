@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class SiteDetailMenu extends StatelessWidget {
   final List<String> menus;
   final int selectedIndex;
-  final Function(int) onTap;
+  final Function(int,String) onTap;
 
   const SiteDetailMenu({Key? key,required this.menus,required this.selectedIndex,required this.onTap}) : super(key: key);
 
@@ -21,7 +21,7 @@ class SiteDetailMenu extends StatelessWidget {
               for(int index=0;index<menus.length;index++)
                 InkWell(
                     onTap: (){
-                      onTap(index);
+                      onTap(index,menus[index]);
                     },
                     child: Column(
                       children: [
@@ -55,9 +55,9 @@ class SiteDetailMenu extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 11.h,horizontal: 8.w),
           child: Text(title,style: TextStyle(
-            fontSize: 16.sp,
-            color: isSelected?Theme.of(context).colorScheme.primary:null,
-            fontWeight: isSelected?FontWeight.w600:FontWeight.w400,
+            fontSize: 17.sp,
+            color: isSelected?Theme.of(context).colorScheme.primary:Theme.of(context).colorScheme.onBackground,
+            fontWeight: FontWeight.w600,
 
           ),),
         ),

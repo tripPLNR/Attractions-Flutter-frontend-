@@ -1,0 +1,4 @@
+class PrivacyPolicyInitialParams {
+
+const PrivacyPolicyInitialParams();
+}

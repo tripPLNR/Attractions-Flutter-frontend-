@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -31,33 +33,33 @@ class RestAPIAuthRepository implements AuthRepository {
     return LoginJson.fromJson(response).toDomain();
   }
 
-
   @override
   Future<Login> loginWithEmailAndPassword(
       {required String email, required String password}) async {
-    var response = await networkRepository.post(APIEndpoint.loginWithEmailAndPassword, {
+    debugPrint("email : ${email}");
+    debugPrint("password : ${password}");
+    var response =
+        await networkRepository.post(APIEndpoint.loginWithEmailAndPassword, {
       "email": email,
       "password": password,
     });
+
     return LoginJson.fromJson(response).toDomain();
   }
 
-
-
-
   final googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-      'https://www.googleapis.com/auth/userinfo.email'
-    ],
+    clientId: Platform.isIOS
+        ? '727690186741-7vb9d1f90ehiiuat00ghefeersg2t03n.apps.googleusercontent.com'
+        : null,
+    scopes: ['email', 'https://www.googleapis.com/auth/userinfo.email'],
   );
 
   @override
   Future<Login> loginWithGoogle() async {
     GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
     if (googleSignInAccount != null) {
-      // final GoogleSignInAuthentication googleAuth = await googleSignInAccount.authentication;
+      debugPrint(
+          "======> GOT GOOGLE INFORMATION : EMAIL: ${googleSignInAccount.email}, NAME : ${googleSignInAccount.displayName}");
       var response = await networkRepository.post(APIEndpoint.socialLogin, {
         "email": googleSignInAccount.email,
         "firstName": googleSignInAccount.displayName?.split(" ").first,
@@ -71,7 +73,7 @@ class RestAPIAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<Login> loginWithApple() async{
+  Future<Login> loginWithApple() async {
     final appleIdCredential = await SignInWithApple.getAppleIDCredential(
       scopes: [
         AppleIDAuthorizationScopes.email,
@@ -86,12 +88,29 @@ class RestAPIAuthRepository implements AuthRepository {
       idToken: appleIdCredential.identityToken,
       accessToken: appleIdCredential.authorizationCode,
     );
-    debugPrint("@@@@@@@@@ FIREBASE AUTHENTICATING WITH CREDENTIALS @@@@@@@@@@@@");
-    UserCredential userCredential = (await FirebaseAuth.instance.signInWithCredential(credential));
 
-    String name=appleIdCredential.givenName??userCredential.user?.displayName??"";
+    debugPrint(
+        "@@@@@@@@@ FIREBASE AUTHENTICATING WITH CREDENTIALS @@@@@@@@@@@@");
+    UserCredential userCredential =
+        (await FirebaseAuth.instance.signInWithCredential(credential));
+
+    debugPrint("@@@@@@@@@ GIVEN NAME : ${appleIdCredential.givenName}");
+    debugPrint("@@@@@@@@@ FAMILY NAME : ${appleIdCredential.familyName}");
+
+    final appleDisplayName =
+        '${appleIdCredential.givenName ?? ""} ${appleIdCredential.familyName ?? ""}';
+    String name = appleDisplayName.trim().isEmpty
+        ? userCredential.user?.displayName ?? ""
+        : appleDisplayName;
+    String email = appleIdCredential.email ?? userCredential.user?.email ?? "";
+
+    if (appleIdCredential.givenName != null) {
+      userCredential.user?.updateDisplayName(name);
+    }
+    debugPrint("======> GOT APPLE INFORMATION : EMAIL: $email, NAME : $name");
+
     var response = await networkRepository.post(APIEndpoint.socialLogin, {
-      "email": appleIdCredential.email,
+      "email": email,
       "firstName": name.split(" ").first,
       "lastName": name.split(" ").last
     }, parameters: {
@@ -108,10 +127,10 @@ class RestAPIAuthRepository implements AuthRepository {
 
   @override
   Future<void> logout() async {
-    try{
+    try {
       await googleSignIn.disconnect();
       await googleSignIn.signOut();
-    }catch(e){
+    } catch (e) {
       debugPrint(e.toString());
     }
   }

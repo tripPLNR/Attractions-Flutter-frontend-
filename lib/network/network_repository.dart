@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:triplaner/domain/repositories/local_storage_repository.dart';
 
 import 'dart:developer' as logger;
 
@@ -14,11 +15,16 @@ class NetworkRepository {
   /// live server url
   String baseUrl = "35.154.229.4:9460";
 
-  NetworkRepository();
+  LocalStorageRepository localStorageRepository;
+  NetworkRepository({required this.localStorageRepository});
 
-  Future get(String url, {Map<String, dynamic>? parameters}) async {
+  Future get(String url, {Map<String, dynamic>? parameters,bool useToken=false}) async {
     try {
-      var headers = {
+      var headers = useToken?{
+        'accept': 'application/json',
+        'Authorization':"Bearer ${await localStorageRepository.getAccessToken()}"
+      }:
+      {
         'accept': 'application/json',
       };
       final uri = Uri.http(baseUrl, url, parameters);
@@ -35,10 +41,14 @@ class NetworkRepository {
 
 
 
-  Future<dynamic> post(String url, dynamic body, {Map<String, dynamic>? parameters}) async {
+  Future<dynamic> post(String url, dynamic body, {Map<String, dynamic>? parameters,bool useToken=false}) async {
     try {
-      var headers = {
-        'Content-Type': 'application/json',
+      var headers = useToken?{
+        'accept': 'application/json',
+        'Authorization':"Bearer ${await localStorageRepository.getAccessToken()}"
+      }:
+      {
+        'Content-Type': 'application/json'
       };
       final uri = Uri.http(baseUrl, url,parameters);
       debugPrint("REQUEST URL POST========> ${uri.toString()}");
@@ -53,6 +63,30 @@ class NetworkRepository {
     }
   }
 
+
+  Future<dynamic> patch(String url, dynamic body, {Map<String, dynamic>? parameters,bool useToken=false}) async {
+    try {
+      var headers = useToken?{
+        'Content-Type': 'application/json',
+        'Authorization':"Bearer ${await localStorageRepository.getAccessToken()}"
+      }:
+      {
+        'Content-Type': 'application/json'
+      };
+      final uri = Uri.http(baseUrl, url,parameters);
+      debugPrint("REQUEST URL PATCH========> ${uri.toString()}");
+      debugPrint("BODY OF PATCH========> ${body}");
+
+      final requestBody =json.encode(body);
+      http.Response response = await http.patch(uri, headers: headers,body: requestBody);
+      dynamic responseJson = await returnResponse(response);
+      return responseJson;
+    } on SocketException {
+      throw ApiStatuses.INTERNET_CONNECTION_PROBLEM;
+    }catch (e) {
+      rethrow ;
+    }
+  }
   Future put(String url, data) async {
     try {
       var headers = {
@@ -93,12 +127,10 @@ class NetworkRepository {
     //  String stringResponse = response.body;
       // logger.log("**************** RESPONSE ********************");
       // logger.log(stringResponse);
-      debugPrint("Decoding starts....");
       dynamic responseJson = await (await jsonDecode(utf8.decode(response.bodyBytes)));
-      debugPrint("Decoding ends....");
-      print("**************** API RESPONSE *********************");
+      debugPrint("**************** API RESPONSE *********************");
       print(responseJson.toString());
-      print("**************************************************");
+      debugPrint("**************************************************");
       switch (response.statusCode) {
         case 200:
           return responseJson;

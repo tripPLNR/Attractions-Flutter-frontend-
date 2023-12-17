@@ -31,15 +31,17 @@ class CityCard extends StatelessWidget {
             Text(
               "${city.name}",
               style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0,
                   color: Theme.of(context).colorScheme.onBackground),
             ),
             Text(
               "${city.country}",
               style: TextStyle(
                   fontSize: 12.sp,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0,
                   color: Theme.of(context).colorScheme.onBackground.withOpacity(0.5)),
             ),
           ],

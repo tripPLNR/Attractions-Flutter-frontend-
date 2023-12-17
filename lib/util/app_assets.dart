@@ -4,6 +4,8 @@ class AppAssets {
   static String logo='assets/images/logo.svg';
   static String loginTop='assets/images/login_top.png';
   static String noRecordFound='assets/images/no_record.svg';
+  static String noInternet='assets/images/no_internet.svg';
+
 
 
 
@@ -20,6 +22,13 @@ class AppAssets {
 
   static String bookmark='assets/icons/bookmark.svg';
   static String bookmarked='assets/icons/bookmarked.svg';
+  static String location='assets/icons/location.svg';
+  static String selectDate='assets/icons/select_date.svg';
+  static String increment='assets/icons/increment.svg';
+  static String decrement='assets/icons/decrement.svg';
+  static String landMark='assets/icons/landmark.svg';
+
+
 
   static String guidedPrivateTour='assets/icons/guided_private_tour.svg';
   static String nearbyAttraction='assets/icons/nearby_attraction.svg';
@@ -32,6 +41,10 @@ class AppAssets {
   static String clock='assets/icons/clock.svg';
   static String circularBookmark='assets/icons/circular_bookmark.svg';
   static String circularShare='assets/icons/circular_share.svg';
+  static String close='assets/icons/close.svg';
+  static String moreCalendar='assets/icons/more_calendar.svg';
+
+
 
 
   static String filter='assets/icons/filter.svg';
@@ -67,6 +80,36 @@ class AppAssets {
   static String privacyPolicy='assets/icons/account/privacy_policy.svg';
   static String shareApp='assets/icons/account/share_app.svg';
   static String termsOfUse='assets/icons/account/term_of_use.svg';
+
+
+
+  /// filter icons
+
+  static String airport='assets/icons/filter/airport.svg';
+  static String aquaticAdventure='assets/icons/filter/aquatic_adventure.svg';
+  static String cruisesAndNavigator='assets/icons/filter/cruises_and_navigator.svg';
+  static String culturalExperiences='assets/icons/filter/cultural_experiences.svg';
+  static String foodAndDrink='assets/icons/filter/food_and_drink.svg';
+  static String guidedPrivateTourFilter='assets/icons/filter/guided_private_tour.svg';
+  static String hotSprings='assets/icons/filter/hot_springs.svg';
+  static String museum='assets/icons/filter/muesum.svg';
+  static String natureAndWildLife='assets/icons/filter/nature_and_wildlife.svg';
+  static String selectedRadio='assets/icons/filter/selected_radio.svg';
+  static String sightseeingTour='assets/icons/filter/sightseeing_tour.svg';
+  static String skipLine='assets/icons/filter/skip_line.svg';
+  static String spaMassage='assets/icons/filter/spa_massage.svg';
+  static String unSelectedRadio='assets/icons/filter/unselected_radio.svg';
+
+
+
+
+  /// animations
+
+  static String searchAnimation='assets/animations/search.json';
+
+
+
+
 
 
 

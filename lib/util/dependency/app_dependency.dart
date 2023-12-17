@@ -6,9 +6,14 @@ import 'package:triplaner/domain/entities/login.dart';
 import 'package:triplaner/domain/repositories/auth_repository.dart';
 import 'package:triplaner/domain/repositories/database_repository.dart';
 import 'package:triplaner/domain/repositories/local_storage_repository.dart';
+import 'package:triplaner/domain/stores/bottom_nav_store.dart';
+import 'package:triplaner/domain/stores/filter/filter_store_store.dart';
 import 'package:triplaner/domain/stores/user_store.dart';
+import 'package:triplaner/domain/stores/wishlist/wishlist_store.dart';
+import 'package:triplaner/domain/usecases/change_password_usecase.dart';
 import 'package:triplaner/domain/usecases/check_user_login_usecase.dart';
 import 'package:triplaner/domain/usecases/create_account_usecase.dart';
+import 'package:triplaner/domain/usecases/delete_account_usecase.dart';
 import 'package:triplaner/domain/usecases/login_usecase.dart';
 import 'package:triplaner/domain/usecases/logout_usecase.dart';
 import 'package:triplaner/network/network_repository.dart';
@@ -24,12 +29,31 @@ import 'package:triplaner/presentation/pages/authentication/signup/signup_naviga
 import 'package:triplaner/presentation/pages/confirmation/confirmation_cubit.dart';
 import 'package:triplaner/presentation/pages/confirmation/confirmation_initial_params.dart';
 import 'package:triplaner/presentation/pages/confirmation/confirmation_navigator.dart';
+import 'package:triplaner/presentation/pages/main/account/about_us/about_us_cubit.dart';
+import 'package:triplaner/presentation/pages/main/account/about_us/about_us_initial_params.dart';
+import 'package:triplaner/presentation/pages/main/account/about_us/about_us_navigator.dart';
 import 'package:triplaner/presentation/pages/main/account/account_cubit.dart';
 import 'package:triplaner/presentation/pages/main/account/account_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/account/account_navigator.dart';
+import 'package:triplaner/presentation/pages/main/account/change_password/change_password_cubit.dart';
+import 'package:triplaner/presentation/pages/main/account/change_password/change_password_initial_params.dart';
+import 'package:triplaner/presentation/pages/main/account/change_password/change_password_navigator.dart';
+import 'package:triplaner/presentation/pages/main/account/privacy_policy/privacy_policy_cubit.dart';
+import 'package:triplaner/presentation/pages/main/account/privacy_policy/privacy_policy_initial_params.dart';
+import 'package:triplaner/presentation/pages/main/account/privacy_policy/privacy_policy_navigator.dart';
+import 'package:triplaner/presentation/pages/main/account/terms_of_use/terms_of_use_cubit.dart';
+import 'package:triplaner/presentation/pages/main/account/terms_of_use/terms_of_use_initial_params.dart';
+import 'package:triplaner/presentation/pages/main/account/terms_of_use/terms_of_use_navigator.dart';
 import 'package:triplaner/presentation/pages/main/activites/activities_cubit.dart';
 import 'package:triplaner/presentation/pages/main/activites/activities_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/activites/activities_navigator.dart';
+import 'package:triplaner/presentation/pages/main/activites/calendar/calendar_cubit.dart';
+import 'package:triplaner/presentation/pages/main/activites/calendar/calendar_initial_params.dart';
+import 'package:triplaner/presentation/pages/main/activites/calendar/calendar_navigator.dart';
+
+import 'package:triplaner/presentation/pages/main/activites/filter/filter_cubit.dart';
+import 'package:triplaner/presentation/pages/main/activites/filter/filter_initial_params.dart';
+import 'package:triplaner/presentation/pages/main/activites/filter/filter_navigator.dart';
 import 'package:triplaner/presentation/pages/main/bottom_navigation/bottom_navigation_cubit.dart';
 import 'package:triplaner/presentation/pages/main/bottom_navigation/bottom_navigation_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/bottom_navigation/bottom_navigation_navigator.dart';
@@ -42,15 +66,25 @@ import 'package:triplaner/presentation/pages/main/home/home_navigator.dart';
 import 'package:triplaner/presentation/pages/main/search/search_cubit.dart';
 import 'package:triplaner/presentation/pages/main/search/search_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/search/search_navigator.dart';
+import 'package:triplaner/presentation/pages/main/site_detail/check_availability/check_availability_cubit.dart';
+import 'package:triplaner/presentation/pages/main/site_detail/check_availability/check_availability_initial_params.dart';
+import 'package:triplaner/presentation/pages/main/site_detail/check_availability/check_availability_navigator.dart';
+import 'package:triplaner/presentation/pages/main/site_detail/reviews/reviews_cubit.dart';
+import 'package:triplaner/presentation/pages/main/site_detail/reviews/reviews_initial_params.dart';
+import 'package:triplaner/presentation/pages/main/site_detail/reviews/reviews_navigator.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/site_detail_cubit.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/site_detail_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/site_detail_navigator.dart';
 import 'package:triplaner/presentation/pages/main/wishlist/wishlist_cubit.dart';
 import 'package:triplaner/presentation/pages/main/wishlist/wishlist_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/wishlist/wishlist_navigator.dart';
+import 'package:triplaner/presentation/pages/no_internet/no_internet_cubit.dart';
+import 'package:triplaner/presentation/pages/no_internet/no_internet_initial_params.dart';
+import 'package:triplaner/presentation/pages/no_internet/no_internet_navigator.dart';
 import 'package:triplaner/presentation/pages/splash/splash_cubit.dart';
 import 'package:triplaner/presentation/pages/splash/splash_initial_params.dart';
 import 'package:triplaner/presentation/pages/splash/splash_navigator.dart';
+import 'package:triplaner/util/services/internet/internet_connection_service.dart';
 import 'package:triplaner/util/services/location/location_service.dart';
 
 import '../../navigation/app_navigator.dart';
@@ -67,18 +101,28 @@ class AppDependency {
     /// local db
     getIt.registerSingleton<LocalStorageRepository>(HiveRepository());
 
-    /// stores
-    getIt.registerSingleton<UserStore>(UserStore());
-
     /// services
     getIt.registerSingleton<LocationService>(LocationService());
+    // getIt.registerSingleton<InternetConnectionService>(
+    //     InternetConnectionService(appNavigator: getIt())..onInit());
 
     /// register repos layer repository
-    getIt.registerSingleton<NetworkRepository>(NetworkRepository());
+    getIt.registerSingleton<NetworkRepository>(
+        NetworkRepository(localStorageRepository: getIt()));
     getIt.registerSingleton<AuthRepository>(
         RestAPIAuthRepository(networkRepository: getIt()));
     getIt.registerSingleton<DatabaseRepository>(
         RestAPIRepository(networkRepository: getIt()));
+
+    /// stores
+    getIt.registerSingleton<UserStore>(UserStore());
+    getIt.registerSingleton<WishListStore>(WishListStore(
+      databaseRepository: getIt(),
+      snackBar: getIt(),
+    ));
+    getIt.registerSingleton<BottomNavStore>(BottomNavStore());
+    getIt.registerSingleton<FilterStore>(
+        FilterStore(databaseRepository: getIt()));
 
     /// useCases
     getIt.registerSingleton<CheckUserLoginUseCase>(CheckUserLoginUseCase(
@@ -90,17 +134,34 @@ class AppDependency {
       authRepository: getIt(),
       userStore: getIt(),
       localStorageRepository: getIt(),
+      wishListStore: getIt(),
     ));
     getIt.registerSingleton<CreateAccountUseCase>(CreateAccountUseCase(
       authRepository: getIt(),
       userStore: getIt(),
       localStorageRepository: getIt(),
+      wishListStore: getIt(),
     ));
 
     getIt.registerSingleton<LogoutUseCase>(LogoutUseCase(
       authRepository: getIt(),
       userStore: getIt(),
       localStorageRepository: getIt(),
+      wishListStore: getIt(),
+    ));
+    getIt.registerSingleton<DeleteAccountUseCase>(DeleteAccountUseCase(
+      databaseRepository: getIt(),
+      authRepository: getIt(),
+      userStore: getIt(),
+      localStorageRepository: getIt(),
+      wishListStore: getIt(),
+    ));
+
+    getIt.registerSingleton<ChangePasswordUseCase>(ChangePasswordUseCase(
+      databaseRepository: getIt(),
+      authRepository: getIt(),
+      userStore: getIt(),
+      loginUseCase: getIt(),
     ));
 
     /// register cubits
@@ -121,6 +182,9 @@ class AppDependency {
               snackBar: getIt(),
               databaseRepository: getIt(),
               locationService: getIt(),
+              wishListStore: getIt(),
+              bottomNavStore: getIt(),
+              userStore: getIt(),
             ));
 
     getIt.registerSingleton<DestinationDetailNavigator>(
@@ -132,6 +196,8 @@ class AppDependency {
               initialParams: param1,
               snackBar: getIt(),
               databaseRepository: getIt(),
+              userStore: getIt(),
+              wishListStore: getIt(),
             ));
 
     getIt.registerSingleton<ActivitiesNavigator>(ActivitiesNavigator(getIt()));
@@ -142,6 +208,9 @@ class AppDependency {
               initialParams: param1,
               snackBar: getIt(),
               databaseRepository: getIt(),
+              userStore: getIt(),
+              wishListStore: getIt(),
+              filterStore: getIt(),
             ));
 
     getIt.registerSingleton<SiteDetailNavigator>(SiteDetailNavigator(getIt()));
@@ -152,6 +221,8 @@ class AppDependency {
               initialParams: param1,
               snackBar: getIt(),
               databaseRepository: getIt(),
+              userStore: getIt(),
+              wishListStore: getIt(),
             ));
     getIt.registerSingleton<BottomNavigationNavigator>(
         BottomNavigationNavigator(getIt()));
@@ -161,6 +232,7 @@ class AppDependency {
               navigator: getIt(),
               initialParams: param1,
               snackBar: getIt(),
+              bottomNavStore: getIt(),
             ));
     getIt.registerSingleton<SearchNavigator>(SearchNavigator(getIt()));
     getIt.registerFactoryParam<SearchCubit, SearchInitialParams, dynamic>(
@@ -168,6 +240,10 @@ class AppDependency {
               navigator: getIt(),
               initialParams: param1,
               snackBar: getIt(),
+              databaseRepository: getIt(),
+              userStore: getIt(),
+              wishListStore: getIt(),
+              localStorageRepository: getIt(),
             ));
 
     getIt.registerSingleton<WishlistNavigator>(WishlistNavigator(getIt()));
@@ -176,6 +252,9 @@ class AppDependency {
               navigator: getIt(),
               initialParams: param1,
               snackBar: getIt(),
+              userStore: getIt(),
+              wishListStore: getIt(),
+              databaseRepository: getIt(),
             ));
     getIt.registerSingleton<AccountNavigator>(AccountNavigator(getIt()));
     getIt.registerFactoryParam<AccountCubit, AccountInitialParams, dynamic>(
@@ -185,6 +264,7 @@ class AppDependency {
               snackBar: getIt(),
               userStore: getIt(),
               logoutUseCase: getIt(),
+              deleteAccountUseCase: getIt(),
             ));
 
     getIt.registerSingleton<LoginNavigator>(LoginNavigator(getIt()));
@@ -219,10 +299,81 @@ class AppDependency {
     getIt.registerSingleton<ConfirmationNavigator>(
         ConfirmationNavigator(getIt()));
     getIt.registerFactoryParam<ConfirmationCubit,
-        ConfirmationInitialParams, dynamic>(
-            (param1, param2) => ConfirmationCubit(
-          navigator: getIt(),
-          initialParams: param1,
-        ));
+            ConfirmationInitialParams, dynamic>(
+        (param1, param2) => ConfirmationCubit(
+              navigator: getIt(),
+              initialParams: param1,
+            ));
+
+    getIt.registerSingleton<FilterNavigator>(FilterNavigator(getIt()));
+    getIt.registerFactoryParam<FilterCubit, FilterInitialParams, dynamic>(
+        (param1, param2) => FilterCubit(
+              navigator: getIt(),
+              initialParams: param1,
+              snackBar: getIt(),
+              filterStore: getIt(),
+            ));
+
+    getIt.registerSingleton<CheckAvailabilityNavigator>(
+        CheckAvailabilityNavigator(getIt()));
+    getIt.registerFactoryParam<CheckAvailabilityCubit,
+            CheckAvailabilityInitialParams, dynamic>(
+        (param1, param2) => CheckAvailabilityCubit(
+              navigator: getIt(),
+              initialParams: param1,
+            ));
+
+    getIt.registerSingleton<ReviewsNavigator>(ReviewsNavigator(getIt()));
+    getIt.registerFactoryParam<ReviewsCubit, ReviewsInitialParams, dynamic>(
+        (param1, param2) => ReviewsCubit(
+              navigator: getIt(),
+              initialParams: param1,
+              databaseRepository: getIt(),
+              snackBar: getIt(),
+            ));
+    getIt.registerSingleton<PrivacyPolicyNavigator>(
+        PrivacyPolicyNavigator(getIt()));
+    getIt.registerFactoryParam<PrivacyPolicyCubit,
+            PrivacyPolicyInitialParams, dynamic>(
+        (param1, param2) => PrivacyPolicyCubit(
+              navigator: getIt(),
+              initialParams: param1,
+            ));
+    getIt.registerSingleton<AboutUsNavigator>(AboutUsNavigator(getIt()));
+    getIt.registerFactoryParam<AboutUsCubit, AboutUsInitialParams, dynamic>(
+        (param1, param2) => AboutUsCubit(
+              navigator: getIt(),
+              initialParams: param1,
+            ));
+    getIt.registerSingleton<ChangePasswordNavigator>(
+        ChangePasswordNavigator(getIt()));
+    getIt.registerFactoryParam<ChangePasswordCubit,
+            ChangePasswordInitialParams, dynamic>(
+        (param1, param2) => ChangePasswordCubit(
+              navigator: getIt(),
+              initialParams: param1,
+              changePasswordUseCase: getIt(),
+              snackBar: getIt(),
+            ));
+    getIt.registerSingleton<TermsOfUseNavigator>(TermsOfUseNavigator(getIt()));
+    getIt.registerFactoryParam<
+            TermsOfUseCubit, TermsOfUseInitialParams, dynamic>(
+        (param1, param2) => TermsOfUseCubit(
+              navigator: getIt(),
+              initialParams: param1,
+            ));
+    getIt.registerSingleton<CalendarNavigator>(CalendarNavigator(getIt()));
+    getIt.registerFactoryParam<CalendarCubit, CalendarInitialParams, dynamic>(
+        (param1, param2) => CalendarCubit(
+              navigator: getIt(),
+              initialParams: param1,
+            ));
+    getIt.registerSingleton<NoInternetNavigator>(NoInternetNavigator(getIt()));
+    getIt.registerFactoryParam<
+            NoInternetCubit, NoInternetInitialParams, dynamic>(
+        (param1, param2) => NoInternetCubit(
+              navigator: getIt(),
+              initialParams: param1,
+            ));
   }
 }

@@ -49,17 +49,23 @@ class _DestinationDetailState extends State<DestinationDetailPage> {
           return Scaffold(
             backgroundColor: Theme.of(context).colorScheme.background,
             appBar: CustomAppBar(
-              title: "${state.city.name}",
+              title: "${state.city.name}, ${state.city.country}",
+              actionFlex: 1,
               action: [
-                SvgPicture.asset(
-                  AppAssets.circularCalendar,
-                  height: 40.h,
-                  width: 40.w,
-                ),
+                GestureDetector(
+                    onTap: cubit.openCalendarAction,
+                    child: SvgPicture.asset(AppAssets.circularCalendar)),
               ],
             ),
             body: CustomSingleChildScrollViewWithLoadMore(
                 isLoadingMore: state.loadingMoreUncover,
+                noMoreRecord: state.noMoreUncover,
+                onScrollEndReached: (){
+                  /// call auto get till 50 records got
+                  if(state.unCoverMore.length<=50) {
+                    cubit.getMoreUncover();
+                  }
+                },
                 enableScrollUp: true,
                 onLoadMore: () {
                     cubit.getMoreUncover();
@@ -112,75 +118,35 @@ class _DestinationDetailState extends State<DestinationDetailPage> {
                               children: [
                                 title("${attraction.name}"),
                                 SizedBox(
-                                  height: 335.h,
-                                  child: SizedBox(
-                                    child: ListView.builder(
-                                      itemCount: state.loading
-                                          ? 3
-                                          : attraction.sites?.length,
-                                      scrollDirection: Axis.horizontal,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 8.w),
-                                      itemBuilder: (context, index) {
-                                        Site site = state.loading
-                                            ? Site.empty()
-                                            : attraction.sites![index];
-                                        return SiteMiniCard(
-                                          site: site,
-                                          onTap: (){
-                                            cubit.siteAction(site);
-                                          },
-                                        );
-                                      },
-                                    ),
+                                  height: AppConstant.horizontalMiniCardHeight,
+                                  child: ListView.builder(
+                                    itemCount: state.loading
+                                        ? 3
+                                        : attraction.sites?.length,
+                                    scrollDirection: Axis.horizontal,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w),
+                                    itemBuilder: (context, index) {
+                                      Site site = state.loading
+                                          ? Site.empty()
+                                          : attraction.sites![index];
+                                      return SiteMiniCard(
+                                        site: site,
+                                        isBookMarked: cubit.isBookMarked(site),
+                                        onBookMarkTap: () {
+                                          cubit.onBookMarkTap(site);
+                                        },
+                                        onTap: (){
+                                          cubit.siteAction(site);
+                                        },
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
                             );
                           }),
                     ),
-                    // title("Sightseeing tours"),
-                    // SizedBox(
-                    //   height: 335.h,
-                    //   child: ListView.builder(
-                    //     itemCount: 10,
-                    //     scrollDirection: Axis.horizontal,
-                    //     padding: EdgeInsets.symmetric(horizontal: 8.w),
-                    //     itemBuilder: (context, index) {
-                    //       return  SiteMiniCard(
-                    //         site: Site.empty(),
-                    //       );
-                    //     },
-                    //   ),
-                    // ),
-                    // title("Things to do in ${state.city.name}"),
-                    // SizedBox(
-                    //   height: 335.h,
-                    //   child: ListView.builder(
-                    //     itemCount: 10,
-                    //     scrollDirection: Axis.horizontal,
-                    //     padding: EdgeInsets.symmetric(horizontal: 8.w),
-                    //     itemBuilder: (context, index) {
-                    //       return  SiteMiniCard(
-                    //         site: Site.empty(),
-                    //       );
-                    //     },
-                    //   ),
-                    // ),
-                    // title("Cultural experience"),
-                    // SizedBox(
-                    //   height: 335.h,
-                    //   child: ListView.builder(
-                    //     itemCount: 10,
-                    //     scrollDirection: Axis.horizontal,
-                    //     padding: EdgeInsets.symmetric(horizontal: 8.w),
-                    //     itemBuilder: (context, index) {
-                    //       return  SiteMiniCard(
-                    //         site: Site.empty(),
-                    //       );
-                    //     },
-                    //   ),
-                    // ),
                     title("Uncover more"),
                     Skeletonizer(
                       enabled: state.loadingUncover,
@@ -193,6 +159,10 @@ class _DestinationDetailState extends State<DestinationDetailPage> {
                           Site site=state.loadingUncover?Site.empty():state.unCoverMore[index];
                           return  SiteTile(
                             site: site,
+                            isBookMarked: cubit.isBookMarked(site),
+                            onBookMarkTap: () {
+                              cubit.onBookMarkTap(site);
+                            },
                             onTap: (){
                               cubit.siteAction(site);
                             },

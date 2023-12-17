@@ -18,7 +18,7 @@ class CustomStarRating extends StatelessWidget {
       allowHalfRating: true,
       ignoreGestures: ignoreGesture,
       itemCount: oneStarMode?1:5,
-      itemSize: size??15.h,
+      itemSize: size,
       itemBuilder: (context, _) => const Icon(
         Icons.star,
         color: Colors.amber,

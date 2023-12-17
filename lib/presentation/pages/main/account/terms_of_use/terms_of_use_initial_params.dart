@@ -1,0 +1,4 @@
+class TermsOfUseInitialParams {
+
+const TermsOfUseInitialParams();
+}

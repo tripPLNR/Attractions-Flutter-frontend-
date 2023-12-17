@@ -15,25 +15,36 @@ class UserInfoWidget extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                child: Text(user.firstName![0].toUpperCase(),
-                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary,
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w700
+                radius: 28.r,
+                backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                child: Text(user.firstName.toString().substring(0,2).toUpperCase(),
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary,
+                      fontSize: 25.sp,
+                      fontWeight: FontWeight.w700,
+                    letterSpacing: 0
                   ),
                 ),
               ),
               SizedBox(width: 10.w,),
+              // SizedBox(
+              //   width:1.sw-100.w,
+              //   child: Text("${user.email}",style: TextStyle(
+              //       fontSize: 24.sp,
+              //       fontWeight: FontWeight.bold,
+              //     overflow: TextOverflow.ellipsis
+              //   ),),
+              // ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("${user.firstName} ${user.lastName}",style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 16.sp
+                      fontSize: 24.sp,
+                    color: Theme.of(context).colorScheme.onBackground
                   ),),
                   Text("${user.email}",style: TextStyle(
-                      fontSize: 12.sp,
-                      fontStyle: FontStyle.italic
+                      fontSize: 14.sp,
+                      color: Theme.of(context).colorScheme.onBackground
                   ),),
 
                 ],

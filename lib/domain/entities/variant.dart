@@ -14,9 +14,9 @@ class Variant {
 
 
   Variant.empty() {
-    url = "0000";
-    width = 0000;
-    height =0000;
+    url = "";
+    width = 674;
+    height =446;
   }
 
   Map<String, dynamic> toJson() {

@@ -5,21 +5,21 @@ class InclusionJson {
   String? categoryDescription;
   String? type;
   String? typeDescription;
-  String? otherDescription;
+  String? description;
 
   InclusionJson(
       {this.category,
         this.categoryDescription,
         this.type,
         this.typeDescription,
-        this.otherDescription});
+        this.description});
 
   InclusionJson.fromJson(Map<String, dynamic> json) {
     category = json['category'];
     categoryDescription = json['categoryDescription'];
     type = json['type'];
     typeDescription = json['typeDescription'];
-    otherDescription = json['otherDescription'];
+    description = json['description']??json['otherDescription'];
   }
 
   Map<String, dynamic> toJson() {
@@ -28,7 +28,7 @@ class InclusionJson {
     data['categoryDescription'] = this.categoryDescription;
     data['type'] = this.type;
     data['typeDescription'] = this.typeDescription;
-    data['otherDescription'] = this.otherDescription;
+    data['description'] = this.description;
     return data;
   }
 
@@ -38,7 +38,7 @@ class InclusionJson {
       categoryDescription: categoryDescription??"N/A",
       type: type??"N/A",
       typeDescription: typeDescription??"N/A",
-      otherDescription: otherDescription??"N/A"
+        description: description??"N/A"
     );
   }
 }

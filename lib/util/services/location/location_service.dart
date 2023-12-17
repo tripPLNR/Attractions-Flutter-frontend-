@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../../domain/entities/location_info.dart';
+
 
 class LocationService {
   Future<Position> determinePosition() async {
@@ -32,13 +34,18 @@ class LocationService {
     return await Geolocator.getCurrentPosition();
   }
 
-  Future<String> getCityName() async {
+  Future<LocationInfo> getCityName() async {
     Position position=await determinePosition();
     List<Placemark> placemarks = await placemarkFromCoordinates(
       position.latitude,
       position.longitude,
     );
     debugPrint("LOCATION IS ${placemarks.first.locality}");
-    return placemarks.first.locality??"";
+    return LocationInfo(
+      city: placemarks.first.locality,
+      country: placemarks.first.country,
+      longitude: position.longitude,
+      latitude: position.latitude
+    );
   }
 }

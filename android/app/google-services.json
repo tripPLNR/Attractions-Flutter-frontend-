@@ -12,7 +12,20 @@
           "package_name": "com.app.triplaner"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "727690186741-sgh9lc3i2qo0evpn291nsev7o2g0ehq1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.triplaner",
+            "certificate_hash": "1092403534fe9321b61bfc13a97b24f85475cafb"
+          }
+        },
+        {
+          "client_id": "727690186741-1862qu4414e00h5lmdk8krv12f1ltm8t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAWJQiwn-KZ_QlUOJS-S0siQxfRsDOZvGk"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "727690186741-1862qu4414e00h5lmdk8krv12f1ltm8t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "727690186741-7vb9d1f90ehiiuat00ghefeersg2t03n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.triplaner"
+              }
+            }
+          ]
         }
       }
     }

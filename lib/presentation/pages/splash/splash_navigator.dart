@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:triplaner/presentation/pages/main/bottom_navigation/bottom_navigation_navigator.dart';
 import 'package:triplaner/presentation/pages/main/home/home_navigator.dart';
+import 'package:triplaner/presentation/pages/no_internet/no_internet_navigator.dart';
 
 import '../../../../../navigation/app_navigator.dart';
 import '../../../../../util/dependency/app_dependency.dart';
@@ -8,7 +9,7 @@ import 'splash_page.dart';
 import 'splash_cubit.dart';
 import 'splash_initial_params.dart';
 
-class SplashNavigator with HomeRoute,BottomNavigationRoute {
+class SplashNavigator with HomeRoute,BottomNavigationRoute,NoInternetRoute {
   SplashNavigator(this.navigator);
 
   @override

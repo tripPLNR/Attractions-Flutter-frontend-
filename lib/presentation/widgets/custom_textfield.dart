@@ -31,6 +31,8 @@ class CustomTextField extends StatelessWidget {
   String? initialValue;
   bool? isDetail;
   double? height;
+  bool autoFocus;
+
   double? width;
 
   double? prefixHeight;
@@ -60,6 +62,8 @@ class CustomTextField extends StatelessWidget {
       this.dealAsTime,
       this.inputFormatters,
       this.showCurrentCharacters = false,
+      this.autoFocus = false,
+
       this.disable,
       this.isDetail,
       this.keyboard,
@@ -105,6 +109,7 @@ class CustomTextField extends StatelessWidget {
               expands: isDetail != null ? true : false,
               onChanged: onChange,
               onFieldSubmitted: onSubmit,
+              autofocus: autoFocus,
               inputFormatters: inputFormatters,
               style: AppStyle.textFieldTextStyle(context),
               onTap: () {

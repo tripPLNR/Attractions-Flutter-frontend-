@@ -40,6 +40,7 @@ class _AccountState extends State<AccountPage> {
         appBar: const CustomAppBar(
           title: "Account",
           hideBack: true,
+          centerTitle: true,
         ),
         body: BlocBuilder<AccountCubit, AccountState>(
             bloc: cubit,
@@ -61,33 +62,33 @@ class _AccountState extends State<AccountPage> {
                     ),
                     AccountTile(
                       title: "About Us",
-                      onTap: () {},
+                      onTap: cubit.aboutUsAction,
                       iconPath: AppAssets.aboutUs,
                     ),
                     AccountTile(
                       title: "Password Change",
-                      onTap: () {},
+                      onTap: cubit.changePasswordAction,
                       hide: !cubit.isLoggedIn(),
                       iconPath: AppAssets.changePassword,
                     ),
                     AccountTile(
                       title: "Share App",
-                      onTap: () {},
+                      onTap: cubit.shareAppAction,
                       iconPath: AppAssets.shareApp,
                     ),
                     AccountTile(
                       title: "Privacy Policy",
-                      onTap: () {},
+                      onTap: cubit.privacyPolicyAction,
                       iconPath: AppAssets.privacyPolicy,
                     ),
                     AccountTile(
                       title: "Terms of Use",
-                      onTap: () {},
+                      onTap: cubit.termsOfUseAction,
                       iconPath: AppAssets.termsOfUse,
                     ),
                     AccountTile(
                       title: "Delete Account",
-                      onTap: () {},
+                      onTap: cubit.deleteAccount,
                       hide: !cubit.isLoggedIn(),
                       iconPath: AppAssets.deleteAccount,
                     ),

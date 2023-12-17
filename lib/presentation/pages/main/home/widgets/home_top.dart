@@ -7,7 +7,8 @@ import '../../../../../util/app_theme.dart';
 import '../../../../widgets/custom_textfield.dart';
 
 class HomeTop extends StatelessWidget {
-  const HomeTop({Key? key}) : super(key: key);
+  final VoidCallback onSearchTap;
+  const HomeTop({Key? key,required this.onSearchTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,7 @@ class HomeTop extends StatelessWidget {
                     child: Stack(
                       children: [
                         SvgPicture.asset(AppAssets.t,),
-                        Text('   ripPLNR!',style: TextStyle(
+                        Text('   ripPLNR',style: TextStyle(
                             fontSize: 32.sp,
                             fontWeight: FontWeight.w400,
                             fontFamily: AppTheme.petronaFontFamily,
@@ -60,11 +61,12 @@ class HomeTop extends StatelessWidget {
           CustomTextField(
             controller: TextEditingController(),
             prefixPath: AppAssets.search,
+            readOnly: true,
+            onTap:onSearchTap,
             label: "",
             hint: "Search Destinations, Activities......",
             bottomPadding: 0,
           ),
-          SizedBox(height: 28.h,),
         ],
       ),
     );

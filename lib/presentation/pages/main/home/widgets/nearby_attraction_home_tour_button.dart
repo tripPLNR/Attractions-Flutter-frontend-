@@ -26,9 +26,9 @@ class NearbyAttractionHomeTourButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            customWidget(isPrimary: true,assetPath: AppAssets.nearbyAttraction,title: "Nearby Attractions",context:context,onTap: onNearbyAttractionTap),
+            customWidget(isPrimary: true,assetPath: AppAssets.nearbyAttraction,title: "Nearby Attractions",context:context,onTap: onNearbyAttractionTap,iconSize: 24.h),
             SizedBox(width: 16.w,),
-            customWidget(assetPath: AppAssets.guidedPrivateTour,title: "Guided & Private tours",context:context,onTap: onGuidedTourTap),
+            customWidget(assetPath: AppAssets.guidedPrivateTour,title: "Guided & Private tours",context:context,onTap: onGuidedTourTap,iconSize: 21.h),
 
           ],
         ),
@@ -38,11 +38,10 @@ class NearbyAttractionHomeTourButton extends StatelessWidget {
 
 
 
-  Widget customWidget({bool isPrimary=false,required String assetPath,required String title,required BuildContext context,required VoidCallback onTap}){
+  Widget customWidget({bool isPrimary=false,required String assetPath,required String title,required BuildContext context,required VoidCallback onTap,required double iconSize}){
     return InkWell(
       onTap: onTap,
       child: Container(
-        // width: 146.w,
         height: 46.h,
         padding: EdgeInsets.symmetric(horizontal: 10.w),
         decoration: BoxDecoration(
@@ -56,16 +55,18 @@ class NearbyAttractionHomeTourButton extends StatelessWidget {
         child: Center(child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(assetPath,height: 24.h,width: 24.w,),
+            SvgPicture.asset(assetPath,height: iconSize,width: iconSize,),
             SizedBox(width: 8.w,),
             SizedBox(
               width: 95.w,
               child: Text(title,
                 style: TextStyle(
-                  fontSize: 12.sp,
+                  fontSize: 13.sp,
                   fontWeight: FontWeight.w600,
                   fontFamily: AppTheme.montserrat,
+                  letterSpacing: 0
                 ),
+                textAlign: TextAlign.center,
               ),
             )
           ],

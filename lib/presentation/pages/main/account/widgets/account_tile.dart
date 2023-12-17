@@ -21,8 +21,10 @@ class AccountTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return hide
         ? const SizedBox()
-        : GestureDetector(
+        : InkWell(
             onTap: onTap,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
             child: SizedBox(
               height: 72.h,
               width: 1.sw,
@@ -43,9 +45,11 @@ class AccountTile extends StatelessWidget {
                         Text(
                           title,
                           style: TextStyle(
-                              fontSize: 18.sp,
+                              fontSize: 20.sp,
                               fontWeight: FontWeight.w600,
-                              letterSpacing: 0),
+                              letterSpacing: 0,
+                              color: Theme.of(context).colorScheme.onBackground
+                          ),
                         ),
                         Expanded(
                             child: Align(

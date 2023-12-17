@@ -45,17 +45,21 @@ class CustomButton extends StatelessWidget {
       width: width ?? 1.sw,
       height: height ?? 60.h,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
-        borderRadius: BorderRadius.circular(borderRadius??40.r),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.25),
-            spreadRadius: 0,
-            blurRadius: 12,
-            offset: const Offset(0, 4), // changes position of shadow
-          ),
-        ]
-      ),
+          color: Theme.of(context).colorScheme.background,
+          borderRadius: BorderRadius.circular(borderRadius ?? 40.r),
+          boxShadow: [
+            BoxShadow(
+              color: isSecondaryButton == true
+                  ? Theme.of(context)
+                      .colorScheme
+                      .tertiaryContainer
+                      .withOpacity(0.25)
+                  : Theme.of(context).colorScheme.primary.withOpacity(0.25),
+              spreadRadius: 0,
+              blurRadius: 12,
+              offset: const Offset(0, 4), // changes position of shadow
+            ),
+          ]),
       child: ElevatedButton(
         onPressed: () {
           if (isLoading || isDisabled) return;
@@ -66,15 +70,18 @@ class CustomButton extends StatelessWidget {
           backgroundColor: color != null
               ? MaterialStateProperty.all<Color>(color!)
               : MaterialStateProperty.all<Color>(isSecondaryButton
-                  ? Colors.transparent
+                  ? Theme.of(context)
+                      .colorScheme
+                      .tertiaryContainer
+                      .withOpacity(0.5)
                   : isDisabled
                       ? Theme.of(context).colorScheme.secondary.withOpacity(0.2)
                       : Theme.of(context).primaryColor),
           foregroundColor: MaterialStateProperty.all<Color>(
             textColor == null
                 ? isSecondaryButton
-                    ? Theme.of(context).colorScheme.primary
-                    : AppColors.whiteColor
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onPrimary
                 : textColor!,
           ),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -87,19 +94,24 @@ class CustomButton extends StatelessWidget {
                               ? color!
                               : isDisabled
                                   ? Colors.transparent
-                                  : Theme.of(context).primaryColor,
-                      width: 1))),
+                                  : isSecondaryButton
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .tertiaryContainer
+                                          .withOpacity(0.5)
+                                      : Theme.of(context).primaryColor,
+                      width: 0))),
         ),
         child: isLoading
             ? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                  child: CustomLoader(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                    child: CustomLoader(
                   color: isSecondaryButton
                       ? Theme.of(context).colorScheme.onSecondary
                       : Theme.of(context).colorScheme.onPrimary,
                 )),
-            )
+              )
             : FittedBox(
                 child: Row(
                   children: [

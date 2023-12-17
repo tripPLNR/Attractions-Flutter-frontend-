@@ -110,11 +110,27 @@ class _LoginState extends State<LoginPage> {
                             ),
                             state.socialLogging
                                 ? CustomLoader()
-                                : InkWell(
-                              onTap: cubit.socialLoginAction,
-                                  child: SvgPicture.asset(Platform.isAndroid
-                                      ? AppAssets.google
-                                      : AppAssets.apple),
+                                : Row(
+                              mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                                      child: InkWell(
+                                        onTap: cubit.googleLoginAction,
+                                        child: SvgPicture.asset(AppAssets.google),
+                                      ),
+                                    ),
+                                    Visibility(
+                                      visible: Platform.isIOS,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                                        child: InkWell(
+                                          onTap: cubit.appleLoginAction,
+                                          child: SvgPicture.asset(AppAssets.apple),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                             SizedBox(
                               height: 20.h,

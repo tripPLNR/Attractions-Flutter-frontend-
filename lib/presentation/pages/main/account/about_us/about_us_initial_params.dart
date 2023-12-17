@@ -1,0 +1,4 @@
+class AboutUsInitialParams {
+
+const AboutUsInitialParams();
+}

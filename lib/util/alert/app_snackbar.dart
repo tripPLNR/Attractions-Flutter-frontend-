@@ -11,10 +11,27 @@ enum SnackBarType{
 
 class AppSnackBar{
   show({required BuildContext context,required String info,SnackBarType snackBarType=SnackBarType.ERROR}){
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
        SnackBar(
-        content: Text(info,style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.bold),),
+         shape: RoundedRectangleBorder(
+           borderRadius: BorderRadius.only(
+             topLeft: Radius.circular(10.r),
+             topRight: Radius.circular(10.r),
+
+           ),
+         ),
+        content: Row(
+          children: [
+             Icon(getLeadingIcon(snackBarType),color:Colors.white,),
+            SizedBox(width: 10.w,),
+            Text(info,style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.bold),),
+          ],
+        ),
         backgroundColor: getColor(snackBarType),
+         //behavior: SnackBarBehavior.floating,
+         padding: EdgeInsets.symmetric(vertical: 15.h,horizontal: 10.w),
+         elevation: 6.0,
       ),
     );
   }
@@ -27,6 +44,17 @@ class AppSnackBar{
         return AppColors.primaryColor;
       case SnackBarType.SUCCESS:
         return Colors.green;
+    }
+  }
+
+  IconData getLeadingIcon(SnackBarType snackBarType){
+    switch(snackBarType){
+      case SnackBarType.ERROR:
+        return Icons.close;
+      case SnackBarType.INFO:
+        return Icons.info;
+      case SnackBarType.SUCCESS:
+        return Icons.check_circle;
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:triplaner/domain/entities/user.dart';
 
@@ -12,8 +13,9 @@ class HiveRepository implements LocalStorageRepository{
   }
 
   final authBox="authenticationBox";
-
   final cardBox="cardBox";
+  final recentSearchBox="recentSearchBox";
+
 
 
 
@@ -69,6 +71,29 @@ class HiveRepository implements LocalStorageRepository{
   Future<bool> saveUser(User user) async {
     var box = await Hive.openBox(authBox);
     await box.put('user',json.encode(user.toJson()));
+    return true;
+  }
+
+  @override
+  Future<List<String>> getRecentSearches() async {
+    var box = await Hive.openBox<String>(recentSearchBox);
+    List<String> savedRecentSearched=box.values.toList();
+    debugPrint("saved recent searches $savedRecentSearched");
+    return savedRecentSearched.reversed.toSet().toList();
+  }
+
+  @override
+  Future<bool> saveRecentSearch({required String search}) async {
+    var box = await Hive.openBox<String>(recentSearchBox);
+    await box.add(search);
+    debugPrint("added into recent search");
+    return true;
+  }
+
+  @override
+  Future<bool> clearRecentSearch() async {
+    var box = await Hive.openBox<String>(recentSearchBox);
+    box.clear();
     return true;
   }
 

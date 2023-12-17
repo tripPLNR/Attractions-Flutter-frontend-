@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../domain/entities/variant.dart';
+
 extension FormatDate on DateTime{
 
   toDateTime(){
@@ -10,12 +12,21 @@ extension FormatDate on DateTime{
     return DateFormat('hh:mm a').format(this);
   }
   toDate(){
-    return DateFormat('hh:mm a').format(this);
+    return DateFormat('dd-MM-yyyy').format(this);
   }
   toDayNameAndDate(){
     final formatter = DateFormat('EEEE, dd MMM yyyy');
     final formattedDate = formatter.format(this);
     return formattedDate;
+  }
+  toDayMonthNameAndYear(){
+    final formatter = DateFormat('dd MMM yyyy');
+    final formattedDate = formatter.format(this);
+    return formattedDate;
+  }
+  bool isToday(){
+
+   return DateTime.now().toDate()==toDate();
   }
 
 }
@@ -83,19 +94,31 @@ extension TimeAgo on String {
 }
 
 
-
-extension ImageUrlExtension on Map<String, dynamic> {
-  String getImageUrl({int? width,int? height}) {
+extension VariantListExtension on List<Variant> {
+  String? getUrlBySize({int? width, int? height}) {
     width=width??674;
     height=height??446;
-    final variants = this['variants'] as List<dynamic>;
-    for (var variant in variants) {
-      final variantWidth = variant['width'] as int;
-      final variantHeight = variant['height'] as int;
-      if (variantWidth == width && variantHeight == height) {
-        return variant['url'] as String;
+    Variant? foundVariant;
+    double closestDiff = double.infinity;
+
+    for (final variant in this) {
+      if (variant.width == width && variant.height == height) {
+        return variant.url;
+      }
+
+      final widthDiff = (variant.width!.toDouble() - width.toDouble()).abs();
+      final heightDiff = (variant.height!.toDouble() - height.toDouble()).abs();
+      final totalDiff = widthDiff + heightDiff;
+
+      if (totalDiff < closestDiff) {
+        foundVariant = variant;
+        closestDiff = totalDiff;
       }
     }
-    return ''; // Return an empty string if no match is found.
+
+    return foundVariant?.url;
   }
 }
+
+
+

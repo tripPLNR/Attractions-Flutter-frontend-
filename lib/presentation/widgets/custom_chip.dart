@@ -14,10 +14,11 @@ class CustomChip extends StatelessWidget {
     return  InkWell(
       onTap: onTap,
       child: Container(
-        padding:EdgeInsets.symmetric(horizontal: 7.w,),
+        padding:EdgeInsets.symmetric(horizontal: 7.w,vertical: 5.h),
         margin: EdgeInsets.symmetric(horizontal: 4.w),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.r),
+          color: Theme.of(context).colorScheme.background,
           border: Border.all(color: Theme.of(context).colorScheme.primary)
         ),
         child: Row(
@@ -25,7 +26,7 @@ class CustomChip extends StatelessWidget {
           children: [
             SvgPicture.asset(assetPath,),
             SizedBox(width: 4.w,),
-            Text(title,style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.w700,),),
+            Text(title,style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.w600,),),
           ],
         ),
       ),

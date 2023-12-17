@@ -23,7 +23,7 @@ class Image {
   Image.empty() {
     caption = "0000";
     isCover = false;
-    variants = <Variant>[Variant.empty(),Variant.empty(),Variant.empty(),Variant.empty(),Variant.empty(),Variant.empty(),Variant.empty(),Variant.empty(),Variant.empty(),Variant.empty()];
+    variants = <Variant>[Variant.empty(),Variant.empty()];
     imageSource = "0000";
   }
 

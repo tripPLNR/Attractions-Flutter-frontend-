@@ -1,0 +1,4 @@
+class CheckAvailabilityInitialParams {
+
+const CheckAvailabilityInitialParams();
+}

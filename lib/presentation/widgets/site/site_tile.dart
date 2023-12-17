@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:triplaner/domain/entities/site.dart';
+import 'package:triplaner/presentation/widgets/clock_hour_widget.dart';
 import 'package:triplaner/presentation/widgets/custom_cache_image.dart';
-import 'package:triplaner/presentation/widgets/custom_star_rating.dart';
+import 'package:triplaner/presentation/widgets/free_refund_widget.dart';
+import 'package:triplaner/presentation/widgets/price_widget.dart';
 import 'package:triplaner/util/app_assets.dart';
+import 'package:triplaner/util/app_constant.dart';
 import 'package:triplaner/util/app_extentions.dart';
 
 import '../custom_bookmark.dart';
@@ -12,19 +15,29 @@ import 'rating_and_review_widget.dart';
 
 class SiteTile extends StatelessWidget {
   final VoidCallback? onTap;
+  final VoidCallback? onBookMarkTap;
+  final bool isBookMarked;
   final Site site;
+  final double? bottomMargin;
+  const SiteTile(
+      {Key? key,
+      this.onTap,
+      required this.site,
+      this.isBookMarked = false,
+      this.onBookMarkTap,
+      this.bottomMargin,
 
-  const SiteTile({Key? key, this.onTap, required this.site}) : super(key: key);
+      })
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double height=160.h;
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: height,
+        height: AppConstant.horizontalTileCardHeight,
         padding: EdgeInsets.all(8.h),
-        margin: EdgeInsets.only(bottom: 13.h),
+        margin: EdgeInsets.only(bottom: bottomMargin??13.h),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.r),
             color: Theme.of(context).colorScheme.surface,
@@ -47,16 +60,32 @@ class SiteTile extends StatelessWidget {
           children: [
             Stack(
               children: [
-                CustomCacheImage(
-                  imgUrl:"${site.images?.first.toJson().getImageUrl()}",
-                  height: height,
-                  radius: 12.r,
-                  width: 123.w,
+                Hero(
+                  tag: '${site.images?.first.variants!.getUrlBySize()}',
+                  child: CustomCacheImage(
+                    imgUrl: "${site.images?.first.variants!.getUrlBySize()}",
+                    height:AppConstant.horizontalTileCardHeight,
+                    radius: 12.r,
+                    width: 123.w,
+                  ),
                 ),
-                const Positioned.fill(
+                Positioned.fill(
                   child: Align(
-                      alignment: Alignment.topRight, child: CustomBookMark()),
-                )
+                      alignment: Alignment.topRight,
+                      child: CustomBookMark(
+                        isBookmarked: isBookMarked,
+                        onTap: onBookMarkTap,
+                      )),
+                ),
+                // Positioned.fill(
+                //   bottom: 4.h,
+                //   child: Align(
+                //     alignment: Alignment.bottomCenter,
+                //     child: FreeRefundWidget(
+                //       site: site,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
             SizedBox(
@@ -76,8 +105,9 @@ class SiteTile extends StatelessWidget {
                       Text(
                         "${site.title}",
                         style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0
                         ),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
@@ -88,59 +118,34 @@ class SiteTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      RatingAndReviewWidget(
+                          rating: site.ratings?.ratings ?? 0,
+                          reviews: site.ratings?.reviewersCount ?? 0,
+                          starSize: 20.h,
+                      ),
+                      SizedBox(
+                        height: 4.h,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          RatingAndReviewWidget(
-                              rating: site.ratings?.ratings ?? 0,
-                              reviews: site.ratings?.reviewersCount ?? 0),
-                          Text(
-                            "${site.provider}",
-                            style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w400,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .tertiaryContainer),
-                          )
-                        ],
-                      ),
-                      SizedBox(height: 4.h,),
-                      Text(
-                        "Free cancellation",
-                        style: TextStyle(
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w400,
-                            color: Theme.of(context).colorScheme.primary),
-                      ),
-                      SizedBox(height: 4.h,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              SvgPicture.asset(
-                                AppAssets.clock,
-                                height: 16.h,
-                              ),
-                              SizedBox(
-                                width: 4.w,
-                              ),
-                              Text(
-                                "${site.duration?.hours} hours",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14.sp),
-                              )
-                            ],
+                          ClockAndHourWidget(
+                              site: site,
+                              clockSize: 16.h,
+                              timeSize: 14.sp,
                           ),
-                          Text(
-                            "${site.currency} ${site.basePrice}",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16.sp,
-                                color: Theme.of(context).colorScheme.primary),
-                          )
+                          PriceWidget(
+                            price: "${site.basePrice}",
+                            fromSize:16.sp,
+                            priceSize:26.sp,
+                          ),
+                          // Text(
+                          //   "US \$${site.basePrice}",
+                          //   style: TextStyle(
+                          //       fontWeight: FontWeight.w700,
+                          //       fontSize: 16.sp,
+                          //       color: Theme.of(context).colorScheme.primary),
+                          // )
                         ],
                       )
                     ],

@@ -8,8 +8,12 @@ import 'package:triplaner/util/app_constant.dart';
 
 class SiteDetailTop extends StatelessWidget {
   final List<String> images;
+  final VoidCallback onShare;
+  final VoidCallback? onBack;
+  final VoidCallback? onBookMarkTap;
+  final bool isBookMarked;
 
-  const SiteDetailTop({Key? key, required this.images}) : super(key: key);
+  const SiteDetailTop({Key? key, required this.images,required this.onShare,this.onBack,required this.isBookMarked,required this.onBookMarkTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,7 @@ class SiteDetailTop extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(
-                onTap: (){
+                onTap: onBack??(){
                   Navigator.pop(context);
                 },
                 child: SvgPicture.asset(
@@ -34,18 +38,26 @@ class SiteDetailTop extends StatelessWidget {
               ),
               Row(
                 children: [
-                  SvgPicture.asset(
-                    AppAssets.circularShare,
-                    height: 40.h,
-                    width: 40.h,
+                  InkWell(
+                    onTap: onShare,
+                    child: SvgPicture.asset(
+                      AppAssets.circularShare,
+                      height: 40.h,
+                      width: 40.h,
+                    ),
                   ),
                   SizedBox(
                     width: 6.w,
                   ),
-                  SvgPicture.asset(
-                    AppAssets.circularBookmark,
-                    height: 40.h,
-                    width: 40.h,
+                  GestureDetector(
+                    onTap: onBookMarkTap,
+                    child: SvgPicture.asset(
+                      isBookMarked?
+                      AppAssets.bookmarked:
+                      AppAssets.circularBookmark,
+                      height: 40.h,
+                      width: 40.h,
+                    ),
                   ),
                 ],
               )

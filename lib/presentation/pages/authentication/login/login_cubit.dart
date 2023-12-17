@@ -62,26 +62,21 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
-  void socialLoginAction(){
-    if(Platform.isAndroid){
-      _googleLoginAction();
-    }else{
-      _appleLoginAction();
-    }
-  }
-  _googleLoginAction() async {
+
+  googleLoginAction() async {
     try{
       emit(state.copyWith(socialLogging: true));
       await loginUseCase.execute(email: "", password: "",isGoogle: true);
       emit(state.copyWith(socialLogging: false));
       navigator.openBottomNavigation(const BottomNavigationInitialParams());
     }catch(e){
+      debugPrint(e.toString());
       emit(state.copyWith(socialLogging: false));
       snackBar.show(context: context, info: e.toString());
     }
   }
 
-  _appleLoginAction() async {
+  appleLoginAction() async {
     try{
       emit(state.copyWith(socialLogging: true));
       await loginUseCase.execute(email: "", password: "",isApple: true);

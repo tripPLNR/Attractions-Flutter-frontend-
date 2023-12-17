@@ -14,39 +14,53 @@ class RatingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: 22.h, bottom: 30.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Ratings & Reviews",
-            style: AppStyle.headingH2(context),
-          ),
-          SizedBox(
-            height: 12.h,
-          ),
-          Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: 22.h, bottom: 30.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomStarRating(
-                rating: site.ratings?.ratings ??0,
-                size: 30,
+              Text(
+                "Ratings & Reviews",
+                style: AppStyle.siteDetailHeading(context),
               ),
               SizedBox(
-                width: 8.w,
+                height: 12.h,
               ),
-              Text(
-                "${site.ratings?.ratings} ",
-                style: TextStyle(fontSize: 25.sp, fontWeight: FontWeight.w700),
-              ),
-              Text(
-                "(${site.ratings?.reviewersCount} reviews)",
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+              Row(
+                children: [
+                  CustomStarRating(
+                    rating: site.ratings?.ratings ??0,
+                    size: 30,
+
+                  ),
+                  SizedBox(
+                    width: 8.w,
+                  ),
+                  Text(
+                    "${site.ratings?.ratings} ",
+                    style: TextStyle(fontSize: 26.sp, fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.tertiaryContainer
+                    ),
+                  ),
+                  Text(
+                    "(${site.ratings?.reviewersCount} reviews)",
+                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.tertiaryContainer
+                    ),
+                  ),
+                ],
               ),
             ],
-          )
-        ],
-      ),
+          ),
+        ),
+        const Divider(
+          thickness: 1,
+          height: 0,
+        ),
+      ],
     );
   }
 }

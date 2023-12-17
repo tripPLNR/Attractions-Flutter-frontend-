@@ -11,28 +11,48 @@ class AppStyle {
       );
 
   static TextStyle headingH1(BuildContext context) => TextStyle(
-        fontSize: 21.sp,
+        fontSize: 22.sp,
         fontWeight: FontWeight.w600,
         color: Theme.of(context).colorScheme.onBackground,
         fontFamily: AppTheme.montserratAlternates,
+        letterSpacing: 0
       );
 
   static TextStyle headingH2(BuildContext context) => TextStyle(
-      fontSize: 22.sp,
-      fontWeight: FontWeight.bold,
+      fontSize: 23.sp,
+      fontWeight: FontWeight.w700,
+      color: Theme.of(context).colorScheme.onBackground,
+  );
+  static TextStyle siteDetailHeading(BuildContext context) => TextStyle(
+    fontSize: 22.sp,
+    fontWeight: FontWeight.w700,
+    color: Theme.of(context).colorScheme.onBackground,
+      letterSpacing: 0
+  );
+
+  static TextStyle siteDetailSubHeading(BuildContext context) => TextStyle(
+    fontSize: 20.sp,
+    fontWeight: FontWeight.w400,
+    color: Theme.of(context).colorScheme.onBackground,
+    letterSpacing: 0
+  );
+  static TextStyle headingH3(BuildContext context) => TextStyle(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w600,
+    height: 1.5,
+    color: Theme.of(context).colorScheme.onBackground,
+  );
+  static TextStyle bottomSheetHeading(BuildContext context) => TextStyle(
+      fontSize: 16.sp,
+      fontWeight: FontWeight.w600,
       color: Theme.of(context).colorScheme.onBackground,
   );
 
-  static TextStyle headingH3(BuildContext context) => TextStyle(
-    fontSize: 12.sp,
-    fontWeight: FontWeight.w400,
-    color: Theme.of(context).colorScheme.tertiaryContainer,
+  static TextStyle bottomSheetSubHeading(BuildContext context) => TextStyle(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w600,
+    color: Theme.of(context).colorScheme.onBackground,
   );
-  static TextStyle bottomSheetHeading() => TextStyle(
-      fontSize: 20.sp,
-      fontWeight: FontWeight.w700,
-      color: AppColors.blackColor);
-
   static TextStyle authSubHeadingStyle(BuildContext context) => TextStyle(
         fontSize: 12.sp,
         fontWeight: FontWeight.w600,

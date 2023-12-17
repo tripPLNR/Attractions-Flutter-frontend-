@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:triplaner/data/repositories/hive_repository.dart';
+import 'package:triplaner/navigation/app_navigator.dart';
 import 'package:triplaner/presentation/pages/main/home/home_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/home/home_page.dart';
 import 'package:triplaner/presentation/pages/splash/splash_initial_params.dart';
@@ -41,24 +42,30 @@ Future<void> main() async {
         designSize: const Size(390, 844),
         minTextAdapt: true,
         builder: (context, child) {
-          return const MainApp();
+          return MaterialApp(
+            navigatorKey: AppNavigator.navigatorKey,
+            builder:  (BuildContext context, Widget? child) {
+              Widget error = const Text('something went wrong');
+              if (child is Scaffold || child is Navigator) {
+                error = Scaffold(body: Center(child: error));
+              }
+              ErrorWidget.builder = (errorDetails) => error;
+
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(textScaleFactor: 1.sp,), //set desired text scale factor here
+                child: child!,
+              );
+            },
+            title: AppConstant.appName,
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme(),
+            home: SplashPage(
+              cubit: getIt(param1: const SplashInitialParams()),
+            ),
+
+          );
         }),
   );
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppConstant.appName,
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme(),
-      home: SplashPage(
-        cubit: getIt(param1: const SplashInitialParams()),
-      ),
-
-    );
-  }
-}

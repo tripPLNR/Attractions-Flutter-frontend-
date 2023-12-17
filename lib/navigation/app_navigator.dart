@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../util/app_colors.dart';
 import 'routing_animation.dart';
 
-final GlobalKey<ScaffoldState> globalKey = GlobalKey(); // Create a key
 
 
 class AppNavigator {
+  static final  GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   push(BuildContext context, Widget page) {
     Navigator.push(
@@ -32,15 +32,12 @@ class AppNavigator {
       ),
       backgroundColor: AppColors.whiteColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(40.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
       builder: (context) =>  ClipRRect(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(40.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         clipBehavior: Clip.antiAlias, // Set clipBehavior to Clip.antiAlias
-        child: Padding(
-          padding:padding??EdgeInsets.only(left: 30.w,top: 25.h,right: 30.h,bottom: 10),
-          child: page,
-        ),
+        child: page,
       ),
     );
 

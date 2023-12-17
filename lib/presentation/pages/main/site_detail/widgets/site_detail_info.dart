@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:triplaner/domain/entities/site.dart';
+import 'package:triplaner/presentation/widgets/clock_hour_widget.dart';
+import 'package:triplaner/presentation/widgets/price_widget.dart';
 import 'package:triplaner/util/app_constant.dart';
 
 import '../../../../../util/app_assets.dart';
@@ -9,96 +11,118 @@ import '../../../../widgets/custom_star_rating.dart';
 
 class SiteDetailInfo extends StatelessWidget {
   final Site site;
-  const SiteDetailInfo({Key? key,required this.site}) : super(key: key);
+
+  const SiteDetailInfo({Key? key, required this.site}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return   Column(
+    return Column(
       children: [
-        SizedBox(height: 12.h,),
+        SizedBox(
+          height: 12.h,
+        ),
         Padding(
-          padding:AppConstant.screenPadding,
+          padding: AppConstant.screenPadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Text("Day Trip",style: TextStyle(
-              //     fontSize: 13.sp,
-              //     fontWeight: FontWeight.w600,
-              //     color: Theme.of(context).colorScheme.primary
-              // ),),
-              Text("${site.title}",style: TextStyle(
-                fontSize: 22.sp,
-                fontWeight: FontWeight.w500,
-              ),),
-              Text("${site.location}",style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.tertiaryContainer
-              ),),
-              SizedBox(height: 8.h,),
+              Text(
+                "${site.title}",
+                style: TextStyle(
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+              ),
+              site.isRefundAvailable()?
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 6.h),
+                child: Text(
+                  "free cancellation",
+                  style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.primary),
+                ),
+              )
+                  : const SizedBox(),
+              SizedBox(height: 4.h,),
               Row(
                 children: [
-                   CustomStarRating(
+                  CustomStarRating(
                     ignoreGesture: true,
-                    rating: site.ratings?.ratings??0,
+                    rating: site.ratings?.ratings ?? 0,
+                    size: 25.h,
+
                   ),
-                  Text(
-                    " ${site.ratings?.ratings} (${site.ratings?.reviewersCount} reviews)",
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w400,
-                      color: Theme.of(context).colorScheme.tertiaryContainer,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 13.h,
-                    child: VerticalDivider(thickness: 1,color: Theme.of(context).colorScheme.tertiaryContainer,),
-                  ),
-                  Text(
-                    "Free cancellation",
-                    style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Theme.of(context).colorScheme.primary),
-                  )
+                  Text.rich(TextSpan(
+                      text: " ${site.ratings?.ratings}",
+                      style: TextStyle(
+                        fontSize: 23.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.tertiaryContainer,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: "(${site.ratings?.reviewersCount} reviews)",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color:
+                                Theme.of(context).colorScheme.tertiaryContainer,
+                          ),
+                        )
+                      ])),
                 ],
               ),
               SizedBox(
-                height: 3.h,
+                height: 6.h,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        AppAssets.clock,
-                        height: 16.h,
-                      ),
-                      SizedBox(
-                        width: 4.w,
-                      ),
-                      Text(
-                        "${site.duration?.hours} hours",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 14.sp),
-                      )
-                    ],
+                  ClockAndHourWidget(
+                    site: site,
+                    clockSize: 14.h,
+                    timeSize: 18.sp,
                   ),
-                  Text(
-                    "From ${site.currency} ${site.basePrice}",
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
+                  PriceWidget(
+                      fromSize: 16.sp,
+                      priceSize: 27.sp,
+                      priceWeight: FontWeight.w800,
+                      fromWeight: FontWeight.w400,
+                      price: "${site.basePrice}")
                 ],
               ),
+
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   children: [
+              //     Text(
+              //       "from ",
+              //       style: TextStyle(
+              //         fontSize: 16.sp,
+              //         fontWeight: FontWeight.w600,
+              //         color: Theme.of(context).colorScheme.primary,
+              //       ),
+              //     ),
+              //     Text(
+              //       "\$${site.basePrice}",
+              //       style: TextStyle(
+              //         fontSize: 24.sp,
+              //         fontWeight: FontWeight.bold,
+              //         color: Theme.of(context).colorScheme.primary,
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),
-        SizedBox(height: 14.h,),
+        SizedBox(
+          height: 14.h,
+        ),
       ],
     );
   }

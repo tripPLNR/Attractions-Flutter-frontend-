@@ -16,6 +16,8 @@ class DestinationDetailState {
 
   final PopularGatewayDetail popularGatewayDetail;
 
+  final List<Site> wishListSites;
+
   const DestinationDetailState({
     required this.loading,
     required this.city,
@@ -24,24 +26,28 @@ class DestinationDetailState {
     required this.loadingUncover,
     required this.loadingMoreUncover,
     required this.noMoreUncover,
+    required this.wishListSites,
   });
 
   factory DestinationDetailState.initial(
           {required DestinationDetailInitialParams initialParams}) =>
       DestinationDetailState(
-          loading: false,
-          city: initialParams.city,
-          popularGatewayDetail: PopularGatewayDetail.empty(),
-          unCoverMore: [],
-          loadingMoreUncover: false,
-          loadingUncover: false,
-          noMoreUncover: false);
+        loading: false,
+        city: initialParams.city,
+        popularGatewayDetail: PopularGatewayDetail.empty(),
+        unCoverMore: [],
+        loadingMoreUncover: false,
+        loadingUncover: false,
+        noMoreUncover: false,
+        wishListSites: [],
+      );
 
   DestinationDetailState copyWith(
           {bool? loading,
           City? city,
           PopularGatewayDetail? popularGatewayDetail,
           List<Site>? unCoverMore,
+          List<Site>? wishListSites,
           bool? loadingMoreUncover,
           bool? loadingUncover,
           bool? noMoreUncover}) =>
@@ -53,5 +59,6 @@ class DestinationDetailState {
         loadingUncover: loadingUncover ?? this.loadingUncover,
         loadingMoreUncover: loadingMoreUncover ?? this.loadingMoreUncover,
         noMoreUncover: noMoreUncover ?? this.noMoreUncover,
+        wishListSites: wishListSites ?? this.wishListSites,
       );
 }

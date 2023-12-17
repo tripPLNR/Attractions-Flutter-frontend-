@@ -1,10 +1,19 @@
+import 'package:triplaner/domain/entities/site.dart';
+
 import 'wishlist_initial_params.dart';
 
 class WishlistState {
-final bool loading;
-const WishlistState({required this.loading});
+  final bool loading;
+  final List<Site> sites;
 
-factory WishlistState.initial({required WishlistInitialParams initialParams}) => WishlistState(loading: false);
+  const WishlistState({required this.loading, required this.sites});
 
-WishlistState copyWith({bool? loading}) => WishlistState(loading: loading??this.loading);
+  factory WishlistState.initial(
+          {required WishlistInitialParams initialParams}) =>
+      WishlistState(loading: false, sites: []);
+
+  WishlistState copyWith({bool? loading, List<Site>? sites}) => WishlistState(
+        loading: loading ?? this.loading,
+        sites: sites ?? this.sites,
+      );
 }

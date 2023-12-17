@@ -6,7 +6,7 @@ This README provides details about the Flutter version and related tools.
 
 | Version | Channel | Repository                               |
 |---------|---------|------------------------------------------|
-| 3.13.0  | stable  | [Flutter Repo](https://github.com/flutter/flutter.git) |
+| 3.16.3  | stable  | [Flutter Repo](https://github.com/flutter/flutter.git) |
 
 ### Framework/FEATURES
 

@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:triplaner/data/models/inclusion_json.dart';
+import 'package:triplaner/data/models/location_json.dart';
+import 'package:triplaner/data/models/varient_json.dart';
 import 'package:triplaner/domain/entities/site.dart';
 
 import 'cancellation_policy_json.dart';
@@ -16,7 +19,7 @@ class SiteJson extends Equatable {
   String? basePrice;
   String? currency;
   DurationJson? duration;
-  String? location;
+  LocationJson? location;
   List<ImageJson>? images;
   List<InclusionJson>? inclusions;
   List<InclusionJson>? exclusions;
@@ -46,44 +49,57 @@ class SiteJson extends Equatable {
       this.updatedAt});
 
   SiteJson.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    productCode = json['productCode'];
-    provider = json['provider'];
-    title = json['title'];
-    description = json['description'];
-    basePrice = json['basePrice'];
-    currency = json['currency'];
-    duration = json['duration'] != null
-        ? new DurationJson.fromJson(json['duration'])
-        : null;
-    location = json['location'];
-    if (json['images'] != null) {
-      images = <ImageJson>[];
-      json['images'].forEach((v) {
-        images!.add(new ImageJson.fromJson(v));
-      });
-    }
-    if (json['inclusions'] != null) {
-      inclusions = <InclusionJson>[];
-      json['inclusions'].forEach((v) {
-        inclusions!.add(new InclusionJson.fromJson(v));
-      });
-    }
-    if (json['exclusions'] != null) {
-      exclusions = <InclusionJson>[];
-      json['exclusions'].forEach((v) {
-        exclusions!.add(new InclusionJson.fromJson(v));
-      });
-    }
-    productUrl = json['productUrl'];
-    ratings = json['ratings'] != null
-        ? new RatingJson.fromJson(json['ratings'])
-        : null;
-    cancellationPolicy = json['cancellationPolicy'] != null
-        ? new CancellationPolicyJson.fromJson(json['cancellationPolicy'])
-        : null;
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+      id = json['id'];
+      productCode = json['productCode'];
+      provider = json['provider'];
+      title = json['title'];
+      description = json['description'];
+      basePrice = json['basePrice'];
+      currency = json['currency'];
+      duration = json['duration'] != null
+          ? DurationJson.fromJson(json['duration'])
+          : null;
+      if (json['images'] != null) {
+        images = <ImageJson>[];
+        json['images'].forEach((v) {
+          images!.add(new ImageJson.fromJson(v));
+        });
+      }
+      try {
+      if (json['inclusions'] != null) {
+        inclusions = <InclusionJson>[];
+        json['inclusions'].forEach((v) {
+          inclusions!.add(new InclusionJson.fromJson(v));
+        });
+      }
+      if (json['exclusions'] != null) {
+        exclusions = <InclusionJson>[];
+        json['exclusions'].forEach((v) {
+          exclusions!.add(new InclusionJson.fromJson(v));
+        });
+      }
+      }
+      catch(e){
+        debugPrint("something wrong in inclsion exclusion..... ${e.toString()}");
+      }
+      productUrl = json['productUrl'];
+      try {
+      ratings = json['ratings'] != null
+          ? RatingJson.fromJson(json['ratings'])
+          : null;
+      }catch(e){
+        debugPrint("something wrong in ratings..... ${e.toString()}");
+      }
+      location = json['location'] != null
+          ? LocationJson.fromJson(json['location'])
+          : null;
+
+      cancellationPolicy = json['cancellationPolicy'] != null
+          ? CancellationPolicyJson.fromJson(json['cancellationPolicy'])
+          : null;
+      createdAt = json['created_at'];
+      updatedAt = json['updated_at'];
+
   }
 
   Map<String, dynamic> toJson() {
@@ -98,7 +114,10 @@ class SiteJson extends Equatable {
     if (this.duration != null) {
       data['duration'] = this.duration!.toJson();
     }
-    data['location'] = this.location;
+    if (this.location != null) {
+      data['location'] = this.location!.toJson();
+    }
+
     if (this.images != null) {
       data['images'] = this.images!.map((v) => v.toJson()).toList();
     }
@@ -121,24 +140,28 @@ class SiteJson extends Equatable {
   }
 
   Site toDomain() {
-    return Site(
-        id: id ?? "",
-        productCode: productCode ?? "N/A",
-        provider: provider ?? "N/A",
-        title: title ?? "N/A",
-        description: description ?? "N/A",
-        basePrice: double.parse(basePrice??"0"),
-        currency: currency ?? "N/A",
-        duration: duration?.toDomain(),
-        location: location ?? "N/A",
-        images: images?.map((e) => e.toDomain()).toList() ?? [],
-        inclusions: inclusions?.map((e) => e.toDomain()).toList() ?? [],
-        exclusions: exclusions?.map((e) => e.toDomain()).toList() ?? [],
-        productUrl: productUrl ?? "N/A",
-        ratings: ratings?.toDomain(),
-        cancellationPolicy: cancellationPolicy?.toDomain(),
-        createdAt: createdAt ?? "2023-10-20T23:23:37.687Z",
-        updatedAt: updatedAt ?? "2023-10-20T23:23:37.687Z");
+    try {
+      return Site(
+          id: id ?? "",
+          productCode: productCode ?? "N/A",
+          provider: provider ?? "N/A",
+          title: title ?? "N/A",
+          description: description ?? "N/A",
+          basePrice: double.parse(basePrice ?? "0").toInt(),
+          currency: currency ?? "N/A",
+          duration: duration?.toDomain(),
+          location: location?.toDomain(),
+          images: images?.map((e) => e.toDomain()).toList() ?? [],
+          inclusions: inclusions?.map((e) => e.toDomain()).toList() ?? [],
+          exclusions: exclusions?.map((e) => e.toDomain()).toList() ?? [],
+          productUrl: productUrl ?? "N/A",
+          ratings: ratings?.toDomain(),
+          cancellationPolicy: cancellationPolicy?.toDomain(),
+          createdAt: createdAt ?? "2023-10-20T23:23:37.687Z",
+          updatedAt: updatedAt ?? "2023-10-20T23:23:37.687Z");
+    }catch(e){
+      return Site.empty();
+    }
   }
 
 
@@ -162,6 +185,6 @@ class SiteJson extends Equatable {
         ratings,
         cancellationPolicy,
         createdAt,
-        updatedAt
+        updatedAt,
       ];
 }
