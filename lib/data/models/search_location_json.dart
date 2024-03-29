@@ -1,41 +1,29 @@
 import 'package:triplaner/domain/entities/search_location.dart';
+import 'package:triplaner/util/app_extentions.dart';
 
 class SearchLocationJson {
-  String? cityName;
-  String? id;
-  String? createdAt;
-  String? updatedAt;
-  String? region;
-
+  int? id;
+  String? name;
   SearchLocationJson(
-      {this.cityName, this.id, this.createdAt, this.updatedAt, this.region});
+      {this.name, this.id,});
 
   SearchLocationJson.fromJson(Map<String, dynamic> json) {
-    cityName = json['cityName'];
     id = json['id'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    region = json['region'];
+    name = json['name'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['cityName'] = this.cityName;
     data['id'] = this.id;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['region'] = this.region;
+    data['name'] = this.name;
     return data;
   }
 
 
   SearchLocation toDomain(){
     return SearchLocation(
-      cityName: cityName??"N/A",
-      id: id??"N/A",
-      createdAt: createdAt??"N/A",
-      updatedAt: updatedAt??"N/A",
-      region: region??"N/A"
+      id: id.toString(),
+      name: name.toString().capitalizeFirstLetters(),
     );
   }
 }

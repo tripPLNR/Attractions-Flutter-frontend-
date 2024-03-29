@@ -11,34 +11,37 @@ class SiteDetailMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Divider(thickness: 1,height: 0,),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.h),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              for(int index=0;index<menus.length;index++)
-                InkWell(
-                    onTap: (){
-                      onTap(index,menus[index]);
-                    },
-                    child: Column(
-                      children: [
-                        title(title: menus[index],isSelected: selectedIndex==index,context: context),
-                        SizedBox(
-                          width: 80.w,
-                          child: Divider(
-                            thickness: selectedIndex == index ? 2 : 0,
-                            height: 0,
-                            color: selectedIndex == index
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.background,
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.h),
+            child: Row(
+              children: [
+                for(int index=0;index<menus.length;index++)
+                  InkWell(
+                      onTap: (){
+                        onTap(index,menus[index]);
+                      },
+                      child: Column(
+                        children: [
+                          title(title: menus[index],isSelected: selectedIndex==index,context: context),
+                          SizedBox(
+                            width: 80.w,
+                            child: Divider(
+                              thickness: selectedIndex == index ? 2 : 0,
+                              height: 0,
+                              color: selectedIndex == index
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.background,
+                            ),
                           ),
-                        ),
-                      ],
-                    )),
-            ],
+                        ],
+                      )),
+              ],
+            ),
           ),
         ),
         const Divider(

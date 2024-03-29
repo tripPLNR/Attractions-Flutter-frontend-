@@ -31,7 +31,7 @@ class FilterCubit extends Cubit<FilterState> {
       "icon": AppAssets.natureAndWildLife,
     },
     {
-      "title": "Cultural Experience",
+      "title": "Cultural Experiences",
       "icon": AppAssets.culturalExperiences,
     },
     {
@@ -47,7 +47,7 @@ class FilterCubit extends Cubit<FilterState> {
       "icon": AppAssets.guidedPrivateTourFilter,
     },
     {
-      "title": "Aquatic adventures",
+      "title": "Aquatic Adventures",
       "icon": AppAssets.aquaticAdventure,
     },
     {
@@ -60,7 +60,7 @@ class FilterCubit extends Cubit<FilterState> {
       "icon": AppAssets.spaMassage,
     },
     {
-      "title": "Hot springs",
+      "title": "Hot Springs",
       "icon": AppAssets.hotSprings,
     },
 
@@ -130,7 +130,10 @@ class FilterCubit extends Cubit<FilterState> {
        priceMin: state.priceMin,
        priceMax: state.priceMax,
        selectedDuration: state.selectedDuration,
-       selectedCustomerReviewSorting: state.selectedCustomerReviewSorting
+       selectedCustomerReviewSorting: state.selectedCustomerReviewSorting,
+       searchLocation: initialParams.searchLocation,
+         latitude: initialParams.latitude,
+         longitude: initialParams.longitude
      );
      Navigator.pop(context);
    }catch(e){

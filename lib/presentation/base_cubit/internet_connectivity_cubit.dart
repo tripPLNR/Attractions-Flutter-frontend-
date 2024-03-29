@@ -19,7 +19,7 @@ mixin ConnectivityMixin<T> on BaseCubit<T> {
   @override
   Future<void> close() {
     _connectivitySubscription.cancel();
-    debugPrint("Subscription cancelled....");
+    debugPrint("Internet Subscription cancelled....");
     return super.close();
   }
 }

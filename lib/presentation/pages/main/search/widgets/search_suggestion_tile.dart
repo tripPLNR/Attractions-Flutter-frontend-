@@ -5,6 +5,7 @@ import 'package:triplaner/domain/entities/search_location.dart';
 import 'package:triplaner/domain/entities/search_suggestion.dart';
 import 'package:triplaner/util/app_assets.dart';
 import 'package:triplaner/util/app_constant.dart';
+import 'package:triplaner/util/app_style.dart';
 
 class SearchSuggestionTile extends StatelessWidget {
   final SearchLocation searchSuggestion;
@@ -27,10 +28,7 @@ class SearchSuggestionTile extends StatelessWidget {
                   SvgPicture.asset(AppAssets.location,height: 32.h,width: 32.h,),
                   SizedBox(width: 12.w,),
                   Expanded(
-                    child: Text("${searchSuggestion.cityName}",style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w600
-                    ),),
+                    child: Text("${searchSuggestion.name}",style: AppStyle.searchResultTextStyle(context),),
                   ),
                 ],
               ),

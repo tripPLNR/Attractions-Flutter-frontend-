@@ -1,6 +1,8 @@
+import 'package:equatable/equatable.dart';
+
 import 'filter_initial_params.dart';
 
-class FilterState {
+class FilterState extends Equatable{
   final bool loading;
   String selectedActivity;
   String selectedDuration;
@@ -46,4 +48,15 @@ class FilterState {
         selectedDuration: selectedDuration ?? this.selectedDuration,
         selectedCustomerReviewSorting: selectedCustomerReviewSorting ?? this.selectedCustomerReviewSorting,
       );
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+    loading,
+    selectedActivity,
+    priceMin,
+    priceMax,
+    selectedDuration,
+    selectedCustomerReviewSorting
+  ];
 }

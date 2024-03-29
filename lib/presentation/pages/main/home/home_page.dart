@@ -63,182 +63,198 @@ class _HomeState extends State<HomePage> {
               },
               child: Stack(
                 children: [
-                  CustomScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    slivers: [
-                      SliverAppBar(
-                        elevation: 0,
-                        pinned: true,
-                        backgroundColor: Colors.transparent,
-                        expandedHeight: 178.h,
-                        collapsedHeight: 70.h,
-                        automaticallyImplyLeading: false,
-                        floating: false,
-                        flexibleSpace: state.showAppBar
-                            ? HomeAppBar(
-                                onSearchTap: cubit.openSearchScreen,
-                              )
-                            : HomeTop(
-                                onSearchTap: cubit.openSearchScreen,
-                              ),
-                      ),
-                      SliverToBoxAdapter(
-                          child: Column(
-                        children: [
-                          SizedBox(
-                            height: 22.h,
+                  RefreshIndicator(
+                    displacement: 50,
+                    edgeOffset: 0,
+                    onRefresh: () async {
+                      await cubit.refreshAction();
+                    },
+                    child: CustomScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      slivers: [
+                        SliverAppBar(
+                          elevation: 0,
+                          pinned: true,
+                          backgroundColor: Colors.transparent,
+                          expandedHeight: 178.h,
+                          collapsedHeight: 70.h,
+                          automaticallyImplyLeading: false,
+                          floating: false,
+                          flexibleSpace: state.showAppBar
+                              ? HomeAppBar(
+                            onSearchTap: cubit.openSearchScreen,
+                          )
+                              : HomeTop(
+                            onSearchTap: cubit.openSearchScreen,
                           ),
-                          NearbyAttractionHomeTourButton(
-                            onGuidedTourTap: cubit.onGuidedTour,
-                            onNearbyAttractionTap: cubit.onNearbyAttraction,
-                          ),
-                          title("Popular destinations"),
-                          SizedBox(
-                            height: 178.h,
-                            child: Skeletonizer(
-                              enabled: state.loadingPopularGateways,
-                              ignorePointers: state.loadingPopularGateways,
-                              child: ListView.builder(
-                                itemCount: state.loadingPopularGateways
-                                    ? 10
-                                    : state.cities.length,
-                                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  City city = state.loadingPopularGateways
-                                      ? City.empty()
-                                      : state.cities[index];
-                                  return CityCard(
-                                    city: city,
-                                    onTap: () {
-                                      cubit.destinationTapAction(city);
+                        ),
+                        SliverToBoxAdapter(
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 22.h,
+                                ),
+                                NearbyAttractionHomeTourButton(
+                                  onGuidedTourTap: cubit.onGuidedTour,
+                                  onNearbyAttractionTap: cubit.onNearbyAttraction,
+                                ),
+                                title("Popular destinations"),
+                                SizedBox(
+                                  height: 178.h,
+                                  child: Skeletonizer(
+                                    enabled: state.loadingPopularGateways,
+                                    ignorePointers: state.loadingPopularGateways,
+                                    child: ListView.builder(
+                                      itemCount: state.loadingPopularGateways
+                                          ? 10
+                                          : state.cities.length,
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 8.w),
+                                      scrollDirection: Axis.horizontal,
+                                      itemBuilder: (context, index) {
+                                        City city = state.loadingPopularGateways
+                                            ? City.empty()
+                                            : state.cities[index];
+                                        return CityCard(
+                                          city: city,
+                                          onTap: () {
+                                            cubit.destinationTapAction(city);
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                title("Sightseeing tours"),
+                                SizedBox(
+                                  height: AppConstant.horizontalMiniCardHeight,
+                                  child: Skeletonizer(
+                                    enabled: state.loadingSiteSeeingTours,
+                                    ignorePointers: state.loadingSiteSeeingTours,
+                                    child: ListView.builder(
+                                      itemCount: state.loadingSiteSeeingTours
+                                          ? 5
+                                          : state.siteSeeingTours.length,
+                                      scrollDirection: Axis.horizontal,
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 8.w),
+                                      itemBuilder: (context, index) {
+                                        Site site = state.loadingSiteSeeingTours
+                                            ? Site.empty()
+                                            : state.siteSeeingTours[index];
+                                        return miniSiteCard(
+                                            site: site,
+                                            isBookMarked: cubit.isBookMarked(site));
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                title("Top Activities"),
+                                SizedBox(
+                                  height: 116.h,
+                                  child: Skeletonizer(
+                                    enabled: state.loadingTopActivities,
+                                    child: ListView.builder(
+                                      itemCount: state.loadingTopActivities
+                                          ? 10
+                                          : state.topActivities.length,
+                                      scrollDirection: Axis.horizontal,
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 8.w),
+                                      itemBuilder: (context, index) {
+                                        TopActivity topActivity =
+                                        state.loadingTopActivities
+                                            ? TopActivity.empty()
+                                            : state.topActivities[index];
+                                        return ActivityWidget(
+                                          topActivity: topActivity,
+                                          onTap: () {
+                                            cubit.activityAction(topActivity);
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                title("Attractions worldwide"),
+                                SizedBox(
+                                  height: AppConstant.horizontalMiniCardHeight,
+                                  child: Skeletonizer(
+                                    enabled: state.loadingAttractionWorldWide,
+                                    child: ListView.builder(
+                                      itemCount: state.loadingAttractionWorldWide
+                                          ? 5
+                                          : state.attractionsWorldWide.length,
+                                      scrollDirection: Axis.horizontal,
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 8.w),
+                                      itemBuilder: (context, index) {
+                                        Site site = state.loadingAttractionWorldWide
+                                            ? Site.empty()
+                                            : state.attractionsWorldWide[index];
+                                        return miniSiteCard(
+                                            site: site,
+                                            isBookMarked: cubit.isBookMarked(site));
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                title("Water adventures"),
+                                SizedBox(
+                                  height: AppConstant.horizontalMiniCardHeight,
+                                  child: Skeletonizer(
+                                    enabled: state.loadingWaterAdventures,
+                                    child: ListView.builder(
+                                      itemCount: state.loadingWaterAdventures
+                                          ? 5
+                                          : state.waterAdventures.length,
+                                      scrollDirection: Axis.horizontal,
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 8.w),
+                                      itemBuilder: (context, index) {
+                                        Site site = state.loadingWaterAdventures
+                                            ? Site.empty()
+                                            : state.waterAdventures[index];
+                                        return miniSiteCard(
+                                            site: site,
+                                            isBookMarked: cubit.isBookMarked(site));
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                title("More to explore", showSeeMore: true),
+                                Skeletonizer(
+                                  enabled: state.loadingMoreToExplore,
+                                  child: AlignedGridView.count(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 4,
+                                    crossAxisSpacing: 4,
+                                    itemCount: state.loadingMoreToExplore
+                                        ? 6
+                                        : state.moreToExplore.length,
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w,
+                                    ).copyWith(bottom: 65.h),
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      Site site = state.loadingMoreToExplore
+                                          ? Site.empty()
+                                          : state.moreToExplore[index];
+                                      return miniSiteCard(
+                                          site: site,
+                                          isGridView: true,
+                                          isBookMarked: cubit.isBookMarked(site));
                                     },
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          title("Sightseeing tours"),
-                          SizedBox(
-                            height: AppConstant.horizontalMiniCardHeight,
-                            child: Skeletonizer(
-                              enabled: state.loadingSiteSeeingTours,
-                              ignorePointers: state.loadingSiteSeeingTours,
-                              child: ListView.builder(
-                                itemCount: state.loadingSiteSeeingTours
-                                    ? 5
-                                    : state.siteSeeingTours.length,
-                                scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                itemBuilder: (context, index) {
-                                  Site site = state.loadingSiteSeeingTours
-                                      ? Site.empty()
-                                      : state.siteSeeingTours[index];
-                                  return miniSiteCard(
-                                      site: site,
-                                      isBookMarked: cubit.isBookMarked(site));
-                                },
-                              ),
-                            ),
-                          ),
-                          title("Top Activities"),
-                          SizedBox(
-                            height: 116.h,
-                            child: Skeletonizer(
-                              enabled: state.loadingTopActivities,
-                              child: ListView.builder(
-                                itemCount: state.loadingTopActivities
-                                    ? 10
-                                    : state.topActivities.length,
-                                scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                itemBuilder: (context, index) {
-                                  TopActivity topActivity =
-                                      state.loadingTopActivities
-                                          ? TopActivity.empty()
-                                          : state.topActivities[index];
-                                  return ActivityWidget(
-                                    topActivity: topActivity,
-                                    onTap: () {
-                                      cubit.activityAction(topActivity);
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          title("Attractions worldwide"),
-                          SizedBox(
-                            height: AppConstant.horizontalMiniCardHeight,
-                            child: Skeletonizer(
-                              enabled: state.loadingAttractionWorldWide,
-                              child: ListView.builder(
-                                itemCount: state.loadingAttractionWorldWide
-                                    ? 5
-                                    : state.attractionsWorldWide.length,
-                                scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                itemBuilder: (context, index) {
-                                  Site site = state.loadingAttractionWorldWide
-                                      ? Site.empty()
-                                      : state.attractionsWorldWide[index];
-                                  return miniSiteCard(
-                                      site: site,
-                                      isBookMarked: cubit.isBookMarked(site));
-                                },
-                              ),
-                            ),
-                          ),
-                          title("Water adventures"),
-                          SizedBox(
-                            height: AppConstant.horizontalMiniCardHeight,
-                            child: Skeletonizer(
-                              enabled: state.loadingWaterAdventures,
-                              child: ListView.builder(
-                                itemCount: state.loadingWaterAdventures
-                                    ? 5
-                                    : state.waterAdventures.length,
-                                scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                itemBuilder: (context, index) {
-                                  Site site = state.loadingWaterAdventures
-                                      ? Site.empty()
-                                      : state.waterAdventures[index];
-                                  return miniSiteCard(
-                                      site: site,
-                                      isBookMarked: cubit.isBookMarked(site));
-                                },
-                              ),
-                            ),
-                          ),
-                          title("More to explore", showSeeMore: true),
-                          Skeletonizer(
-                            enabled: state.loadingMoreToExplore,
-                            child: AlignedGridView.count(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 4,
-                              crossAxisSpacing: 4,
-                              itemCount: state.loadingMoreToExplore
-                                  ? 6
-                                  : state.moreToExplore.length,
-                              shrinkWrap: true,
-                              padding: EdgeInsets.symmetric(horizontal: 8.w,),
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                Site site = state.loadingMoreToExplore
-                                    ? Site.empty()
-                                    : state.moreToExplore[index];
-                                return miniSiteCard(
-                                    site: site,
-                                    isGridView: true,
-                                    isBookMarked: cubit.isBookMarked(site));
-                              },
-                            ),
-                          ),
-                          SizedBox(height: 20.h,),
-                        ],
-                      )),
-                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20.h,
+                                ),
+                              ],
+                            )),
+                      ],
+                    ),
                   ),
                   StackLoader(
                     show: state.stackLoading,
@@ -253,8 +269,8 @@ class _HomeState extends State<HomePage> {
 
   Widget miniSiteCard(
       {required Site site,
-      bool isGridView = false,
-      bool isBookMarked = false}) {
+        bool isGridView = false,
+        bool isBookMarked = false}) {
     return SiteMiniCard(
       gridviewMode: isGridView,
       isBookMarked: isBookMarked,
@@ -280,27 +296,27 @@ class _HomeState extends State<HomePage> {
           ),
           showSeeMore
               ? InkWell(
-                  onTap: () {
-                    cubit.seeMoreAction();
-                  },
-                  child: Row(
-                    children: [
-                      Text(
-                        "See all",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16.sp,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios_sharp,
-                        size: 15.h,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    ],
+            onTap: () {
+              cubit.seeMoreAction();
+            },
+            child: Row(
+              children: [
+                Text(
+                  "See all",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.sp,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_sharp,
+                  size: 15.h,
+                  color: Theme.of(context).colorScheme.primary,
                 )
+              ],
+            ),
+          )
               : const SizedBox()
         ],
       ),

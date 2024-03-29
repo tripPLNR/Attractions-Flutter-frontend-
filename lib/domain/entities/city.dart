@@ -1,64 +1,55 @@
 import 'package:equatable/equatable.dart';
+import 'package:triplaner/util/app_constant.dart';
 
 class City extends Equatable{
   String? id;
-  String? name;
-  String? country;
-  String? thumbnail;
   String? cityId;
-  String? createdAt;
-  String? updatedAt;
+
+  String? cityName;
+  String? countryName;
+  String? thumbnail;
 
   City(
       {this.id,
-        this.name,
-        this.country,
-
+       this.cityId,
+        this.cityName,
+        this.countryName,
         this.thumbnail,
-        this.cityId,
-        this.createdAt,
-        this.updatedAt});
+      });
 
   City.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    name = json['name'];
-    country = json['country'];
-    thumbnail = json['thumbnail'];
     cityId = json['cityId'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    cityName = json['cityName'];
+    countryName = json['countryName'];
+    thumbnail = json['thumbnail'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['name'] = this.name;
-    data['country'] = this.country;
-    data['thumbnail'] = this.thumbnail;
     data['cityId'] = this.cityId;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    data['cityName'] = this.cityName;
+    data['countryName'] = this.countryName;
+    data['thumbnail'] = this.thumbnail;
     return data;
   }
 
   City.empty() {
     id = "0000";
-    name = "This city";
-    country="Country";
-    thumbnail ="https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg";
-    cityId ="00000";
-    createdAt = "000000";
-    updatedAt = "0000000";
+    cityId="";
+    cityName = "This city";
+    countryName="Country";
+    thumbnail =AppConstant.placeHolderImage;
   }
 
 
   @override
   List<Object?> get props => [
     id,
-    name,
-    thumbnail,
     cityId,
-    createdAt,
-    updatedAt
+    cityName,
+    thumbnail,
+    countryName,
   ];
 }

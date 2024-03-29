@@ -12,27 +12,17 @@ class PopularGatewayDetail {
     if (json['activities'] != null) {
       activities = <TopActivity>[];
       json['activities'].forEach((v) {
-        activities!.add(new TopActivity.fromJson(v));
+        activities!.add(TopActivity.fromJson(v));
       });
     }
     if (json['attractions'] != null) {
       attractions = <Attraction>[];
       json['attractions'].forEach((v) {
-        attractions!.add(new Attraction.fromJson(v));
+        attractions!.add(Attraction.fromJson(v));
       });
     }
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.activities != null) {
-      data['activities'] = this.activities!.map((v) => v.toJson()).toList();
-    }
-    if (this.attractions != null) {
-      data['attractions'] = this.attractions!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
 
   PopularGatewayDetail.empty() {
     activities = <TopActivity>[];

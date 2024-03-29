@@ -26,7 +26,7 @@ class LocationService {
     if (permission == LocationPermission.deniedForever) {
       // Permissions are denied forever, handle appropriately.
       return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+          'Location permissions are permanently denied, allow location permission from settings for this app.');
     }
 
     // When we reach here, permissions are granted and we can

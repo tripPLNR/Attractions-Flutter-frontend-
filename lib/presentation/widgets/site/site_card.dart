@@ -10,6 +10,7 @@ import 'package:triplaner/presentation/widgets/site/rating_and_review_widget.dar
 import 'package:triplaner/util/app_assets.dart';
 import 'package:triplaner/util/app_colors.dart';
 import 'package:triplaner/util/app_extentions.dart';
+import 'package:triplaner/util/app_style.dart';
 
 import '../custom_bookmark.dart';
 import '../custom_cache_image.dart';
@@ -69,10 +70,7 @@ class SiteCard extends StatelessWidget {
                       width: 1.sw,
                       maximumDotCounts: 3,
                       borderRadius: BorderRadius.circular(12.r),
-                      images: site.images
-                              ?.map((e) => e.variants!.getUrlBySize() ?? "")
-                              .toList() ??
-                          [],
+                      images: site.images ?? [],
                     ),
                     Positioned.fill(
                       child: Align(
@@ -99,12 +97,16 @@ class SiteCard extends StatelessWidget {
                 ),
                 Text(
                   "${site.title}",
-                  style: TextStyle(
+                  style: AppStyle.siteCardTileStyle(context).copyWith(
+                    height: 1.3,
                     fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0,
-                    height: 1.3
                   ),
+                  // style: TextStyle(
+                  //   fontSize: 18.sp,
+                  //   fontWeight: FontWeight.w600,
+                  //   letterSpacing: 0,
+                  //   height: 1.3
+                  // ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -121,8 +123,8 @@ class SiteCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     RatingAndReviewWidget(
-                        rating: site.ratings?.ratings ?? 0,
-                        reviews: site.ratings?.reviewersCount ?? 0,
+                      rating: site.totalRating ?? 0,
+                      reviews: site.totalReviews ?? 0,
                       ratingSize: 18.sp,
                     ),
                     // Text(
@@ -146,22 +148,10 @@ class SiteCard extends StatelessWidget {
                       timeSize: 16.sp,
                     ),
                     PriceWidget(
-                      price: "${site.basePrice}",
+                      site: site,
                       fromSize: 24.sp,
                       priceSize: 28.sp,
                     ),
-                    // Row(
-                    //   children: [
-                    //     Text(
-                    //       "US \$${site.basePrice}",
-                    //       style: TextStyle(
-                    //         fontSize: 22.sp,
-                    //         fontWeight: FontWeight.w700,
-                    //         color: Theme.of(context).colorScheme.primary,
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                   ],
                 ),
                 SizedBox(

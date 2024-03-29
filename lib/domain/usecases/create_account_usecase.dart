@@ -19,7 +19,7 @@ class CreateAccountUseCase{
     userStore.setUser(login.user!);
     /// TODO: SAVE LOCALLY
     localStorageRepository.saveUser(login.user!);
-    localStorageRepository.saveAccessToken(login.accessToken!);
+    localStorageRepository.saveAccessToken(login.token!);
 
     wishListStore.getWishList();
     return true;

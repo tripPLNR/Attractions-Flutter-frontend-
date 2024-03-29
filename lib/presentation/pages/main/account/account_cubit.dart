@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
@@ -5,18 +7,21 @@ import 'package:triplaner/domain/entities/user.dart';
 import 'package:triplaner/domain/stores/user_store.dart';
 import 'package:triplaner/domain/usecases/delete_account_usecase.dart';
 import 'package:triplaner/domain/usecases/logout_usecase.dart';
+import 'package:triplaner/presentation/base_cubit/base_cubit.dart';
 import 'package:triplaner/presentation/pages/authentication/login/login_initial_params.dart';
 import 'package:triplaner/presentation/pages/confirmation/confirmation_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/account/about_us/about_us_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/account/change_password/change_password_initial_params.dart';
+import 'package:triplaner/presentation/pages/main/account/currencies/currencies_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/account/privacy_policy/privacy_policy_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/account/terms_of_use/terms_of_use_initial_params.dart';
 import 'package:triplaner/util/alert/app_snackbar.dart';
+import 'package:triplaner/util/app_funtions.dart';
 import 'account_initial_params.dart';
 import 'account_state.dart';
 import 'account_navigator.dart';
 
-class AccountCubit extends Cubit<AccountState> {
+class AccountCubit extends BaseCubit<AccountState> {
   AccountNavigator navigator;
   AccountInitialParams initialParams;
   AppSnackBar snackBar;
@@ -73,9 +78,12 @@ class AccountCubit extends Cubit<AccountState> {
         btnText: "Delete",
         btnAction: () async {
           try {
-            await logoutUseCase.execute();
+            emit(state.copyWith(stackLoading: true));
+            await deleteAccountUseCase.execute();
           } catch (e) {
-            snackBar.show(context: context, info: e.toString());
+            handleException(e.toString(), context);
+          }finally{
+            emit(state.copyWith(stackLoading: false));
           }
         }));
   }
@@ -87,16 +95,24 @@ class AccountCubit extends Cubit<AccountState> {
     navigator.openChangePassword(const ChangePasswordInitialParams());
   }
   privacyPolicyAction(){
-    navigator.openPrivacyPolicy(const PrivacyPolicyInitialParams());
+    AppFunctions.launchUrlInBrowser('https://www.tripplnr.com/privacy-policy/');
+    //navigator.openPrivacyPolicy(const PrivacyPolicyInitialParams());
   }
   termsOfUseAction(){
-    navigator.openTermsOfUse(const TermsOfUseInitialParams());
+    AppFunctions.launchUrlInBrowser('https://www.tripplnr.com/terms-of-use/');
+   // navigator.openTermsOfUse(const TermsOfUseInitialParams());
   }
 
   shareAppAction(){
-    Share.share('Hello, use this app');
+      Share.share(
+          'Download this amazing app now ${Platform.isAndroid?'https://play.google.com/store/apps/details?id=com.app.triplaner':'https://apps.apple.com/us/app/answer-lens/id6470180069'}', subject: 'Download App tripPlnr');
   }
-
+  openCurrenciesPage(){
+    navigator.openCurrencies(CurrenciesInitialParams());
+  }
+  sendUsFeedBackAction(){
+    AppFunctions.openEmail();
+  }
 
 
 }

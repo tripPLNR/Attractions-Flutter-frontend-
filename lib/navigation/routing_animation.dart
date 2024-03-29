@@ -5,7 +5,7 @@ class RoutingAnimation<T> extends PageRouteBuilder<T> {
 
   RoutingAnimation({required this.child})
       : super(
-    transitionDuration: Duration(milliseconds: 500), // Increase the duration of the animation
+    transitionDuration: const Duration(milliseconds: 500), // Increase the duration of the animation
     pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
       return child;
     },

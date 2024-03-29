@@ -1,12 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:triplaner/domain/repositories/auth_repository.dart';
+import 'package:triplaner/presentation/base_cubit/base_cubit.dart';
+import 'package:triplaner/presentation/pages/authentication/otp/otp_initial_params.dart';
 import 'package:triplaner/util/alert/app_snackbar.dart';
 import 'forget_password_initial_params.dart';
 import 'forget_password_state.dart';
 import 'forget_password_navigator.dart';
 
-class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
+class ForgetPasswordCubit extends BaseCubit<ForgetPasswordState> {
   ForgetPasswordNavigator navigator;
   ForgetPasswordInitialParams initialParams;
   AppSnackBar snackBar;
@@ -46,16 +48,15 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
     if (_isEmpty()) return;
     try {
       emit(state.copyWith(loading: true));
-      await authRepository.forgetPassword(email: email);
-      emit(state.copyWith(loading: false));
-      Navigator.pop(context);
-      snackBar.show(
-          context: context,
-          info: "Password reset link sent successfully",
-          snackBarType: SnackBarType.SUCCESS);
+      int userId = await authRepository.forgetPassword(email: email);
+      navigator.openOtp(OtpInitialParams(
+        emailOrPhoneNumber: email,
+        userId: userId.toString(),
+      ));
     } catch (e) {
+      handleException(e.toString(), context);
+    } finally {
       emit(state.copyWith(loading: false));
-      snackBar.show(context: context, info: e.toString());
     }
   }
 }

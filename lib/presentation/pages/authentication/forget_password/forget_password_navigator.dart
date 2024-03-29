@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:triplaner/presentation/pages/authentication/otp/otp_navigator.dart';
 import '../../../../../navigation/app_navigator.dart';
 import '../../../../../util/dependency/app_dependency.dart';
 import 'forget_password_page.dart';
@@ -7,7 +8,7 @@ import 'forget_password_initial_params.dart';
 
 
 
-class ForgetPasswordNavigator {
+class ForgetPasswordNavigator with OtpRoute{
 ForgetPasswordNavigator(this.navigator);
 
 @override

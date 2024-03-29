@@ -17,6 +17,7 @@ import 'firebase_options.dart';
 import 'util/app_constant.dart';
 import 'util/app_theme.dart';
 import 'util/dependency/app_dependency.dart';
+import 'util/services/deep_linking/deep_link_service.dart';
 
 
 Future<void> main() async {
@@ -33,8 +34,13 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await DeepLinkService.initialize();
+
+
   /// initialization of dependency injection
   AppDependency.initialize();
+
+
 
   /// run main
   runApp(

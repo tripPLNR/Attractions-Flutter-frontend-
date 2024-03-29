@@ -2,9 +2,16 @@ class AppAssets {
   /// images
   static String homeTop='assets/images/home_top.png';
   static String logo='assets/images/logo.svg';
+  static String splashLogo='assets/images/splash_logo.svg';
+
   static String loginTop='assets/images/login_top.png';
   static String noRecordFound='assets/images/no_record.svg';
+  static String noRecordExist='assets/images/no_record_found.svg';
   static String noInternet='assets/images/no_internet.svg';
+  static String ourMission='assets/images/our_mission.svg';
+  static String aboutUsHeader='assets/images/about_us.png';
+
+
 
 
 
@@ -27,6 +34,10 @@ class AppAssets {
   static String increment='assets/icons/increment.svg';
   static String decrement='assets/icons/decrement.svg';
   static String landMark='assets/icons/landmark.svg';
+  static String gps='assets/icons/gps.svg';
+  static String nearbyGps='assets/icons/nearby_gps.svg';
+
+
 
 
 
@@ -51,6 +62,8 @@ class AppAssets {
   static String duration='assets/icons/duration.svg';
   static String date='assets/icons/date.svg';
   static String price='assets/icons/price.svg';
+  static String profileAvatar='assets/icons/profile_avatar.svg';
+
 
   static String includes='assets/icons/includes.svg';
   static String excludes='assets/icons/excludes.svg';
@@ -80,6 +93,9 @@ class AppAssets {
   static String privacyPolicy='assets/icons/account/privacy_policy.svg';
   static String shareApp='assets/icons/account/share_app.svg';
   static String termsOfUse='assets/icons/account/term_of_use.svg';
+  static String currencies='assets/icons/account/currencies.svg';
+  static String feedBack='assets/icons/account/feedback.svg';
+
 
 
 

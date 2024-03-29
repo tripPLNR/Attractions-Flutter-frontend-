@@ -5,14 +5,17 @@ class User extends Equatable{
   String? lastName;
   String? email;
   String? id;
+  String? authType;
 
-  User({this.firstName, this.lastName, this.email, this.id});
+
+  User({this.firstName, this.lastName, this.email, this.id,this.authType,});
 
   User.fromJson(Map<String, dynamic> json) {
     firstName = json['firstName'];
     lastName = json['lastName'];
     email = json['email'];
     id = json['id'];
+    authType = json['authType'];
   }
 
   User.empty() {
@@ -20,6 +23,7 @@ class User extends Equatable{
     lastName = "";
     email = "";
     id = "";
+    authType="apple";
   }
 
 
@@ -29,6 +33,7 @@ class User extends Equatable{
     data['lastName'] = this.lastName;
     data['email'] = this.email;
     data['id'] = this.id;
+    data['authType'] = this.authType;
     return data;
   }
 
@@ -38,7 +43,8 @@ class User extends Equatable{
     firstName,
     lastName,
     email,
-    id
+    id,
+    authType,
   ];
 
 

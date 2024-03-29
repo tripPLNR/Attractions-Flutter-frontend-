@@ -1,50 +1,65 @@
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
+import 'package:triplaner/data/models/activity_result_json.dart';
+import 'package:triplaner/data/models/booking_response_json.dart';
 import 'package:triplaner/data/models/city_json.dart';
 import 'package:triplaner/data/models/popular_gateway_detail_json.dart';
+import 'package:triplaner/data/models/product_review_json.dart';
 import 'package:triplaner/data/models/search_suggestion_json.dart';
 import 'package:triplaner/data/models/site_json.dart';
 import 'package:triplaner/data/models/top_activity_json.dart';
+import 'package:triplaner/domain/entities/app_currency.dart';
+import 'package:triplaner/domain/entities/booking_response.dart';
 import 'package:triplaner/domain/entities/city.dart';
+import 'package:triplaner/domain/entities/home_data.dart';
 import 'package:triplaner/domain/entities/popular_gateway_detail.dart';
-import 'package:triplaner/domain/entities/review_rating.dart';
+import 'package:triplaner/domain/entities/product_review.dart';
+import 'package:triplaner/domain/entities/search_location.dart';
 import 'package:triplaner/domain/entities/search_suggestion.dart';
 import 'package:triplaner/domain/entities/site.dart';
 import 'package:triplaner/domain/entities/top_activity.dart';
+import 'package:triplaner/domain/http_request_body/filter_request_body.dart';
 import 'package:triplaner/domain/repositories/database_repository.dart';
 import 'package:triplaner/network/api_endpoint.dart';
 import 'package:triplaner/network/network_repository.dart';
+import 'package:triplaner/util/services/device_info/device_info_service.dart';
 
-import '../models/review_rating_json.dart';
+import '../../domain/entities/activity_result.dart';
 
 class RestAPIRepository implements DatabaseRepository {
   NetworkRepository networkRepository;
+  DeviceInfoService deviceInfoService;
 
-  RestAPIRepository({required this.networkRepository});
+  RestAPIRepository(
+      {required this.networkRepository, required this.deviceInfoService});
 
   @override
-  Future<List<City>> getPopularGateways() async {
-    var response = await networkRepository.get(APIEndpoint.getPopularGateways);
+  Future<List<City>> getPopularDestinations() async {
+    var response =
+        await networkRepository.get(APIEndpoint.getPopularDestinations);
     return (response as List)
         .map((e) => CityJson.fromJson(e).toDomain())
         .toList();
   }
 
   @override
-  Future<List<Site>> getUncoverMore(
+  Future<ActivityResult> getUncoverMore(
       {required City city, int take = 10, int skip = 0}) async {
-    var response = await networkRepository.get(APIEndpoint.getUncoverMore,
-        parameters: {
-          "gatewayId": city.id,
-          "take": take.toString(),
-          "skip": skip.toString()
-        });
-    return (response as List)
-        .map((e) => SiteJson.fromJson(e).toDomain())
-        .toList();
+    var response = await networkRepository.get(
+        "${APIEndpoint.getUncoverMore}/${city.cityId}",
+        parameters: {"take": take.toString(), "skip": skip.toString()},
+        getAllResponse: true);
+    ActivityResultJson resultJson = ActivityResultJson(
+        count: response['count'],
+        sites: (response['data'] as List)
+            .map((e) => SiteJson.fromJson(e))
+            .toList());
+    return resultJson.toDomain();
   }
 
   @override
-  Future<List<Site>> getSitesFromEndpoint(
+  Future<ActivityResult> getSitesFromEndpoint(
       {required String endpoint,
       int take = 10,
       int skip = 0,
@@ -54,11 +69,14 @@ class RestAPIRepository implements DatabaseRepository {
       "skip": skip.toString(),
     };
     parameters.addAll(params ?? {});
-    var response =
-        await networkRepository.get(endpoint, parameters: parameters);
-    return (response as List)
-        .map((e) => SiteJson.fromJson(e).toDomain())
-        .toList();
+    var response = await networkRepository.get(endpoint,
+        parameters: parameters, getAllResponse: true);
+    ActivityResultJson resultJson = ActivityResultJson(
+        count: response['count'],
+        sites: (response['data'] as List)
+            .map((e) => SiteJson.fromJson(e))
+            .toList());
+    return resultJson.toDomain();
   }
 
   @override
@@ -121,19 +139,18 @@ class RestAPIRepository implements DatabaseRepository {
   @override
   Future<List<Site>> getSimilarExperiences(
       {int take = 10, int skip = 0, required String siteId}) async {
-    var response = await networkRepository.get(APIEndpoint.getSimilarProducts,
-        parameters: {
-          'skip': skip.toString(),
-          'take': take.toString(),
-          'productId': siteId
-        });
+    var response = await networkRepository
+        .get("${APIEndpoint.getSimilarProducts}/$siteId", parameters: {
+      'skip': skip.toString(),
+      'take': take.toString(),
+    });
     return (response as List)
         .map((e) => SiteJson.fromJson(e).toDomain())
         .toList();
   }
 
   @override
-  Future<PopularGatewayDetail> getPopularGatewayDetail(
+  Future<PopularGatewayDetail> getPopularDestinationDetail(
       {required City city}) async {
     var response = await networkRepository
         .get("${APIEndpoint.getPopularGatewaysDetail}/${city.id}");
@@ -142,8 +159,9 @@ class RestAPIRepository implements DatabaseRepository {
 
   @override
   Future<List<Site>> getMyWishListSites() async {
-    var response =
-        await networkRepository.get(APIEndpoint.getWishList, useToken: true);
+    var response = await networkRepository.get(
+      APIEndpoint.getWishList,
+    );
     return (response as List)
         .map((e) => SiteJson.fromJson(e).toDomain())
         .toList();
@@ -151,51 +169,36 @@ class RestAPIRepository implements DatabaseRepository {
 
   @override
   Future<bool> addOrRemoveFromWishList({required String siteId}) async {
-    var response = await networkRepository
-        .post("${APIEndpoint.addToWishList}/$siteId", {}, useToken: true);
+    var response = await networkRepository.post(
+      "${APIEndpoint.addToWishList}/$siteId",
+      {},
+    );
     return response['added'];
   }
 
   @override
-  Future<SearchSuggestion> getSearchSuggestions(
-      {required String name}) async {
+  Future<SearchSuggestion> getSearchSuggestions({required String name}) async {
     var response = await networkRepository
-        .get(APIEndpoint.getSearchSuggestions, parameters: {"name": name});
+        .get(APIEndpoint.searchByCityCountry, parameters: {"name": name});
     return SearchSuggestionJson.fromJson(response).toDomain();
   }
 
   @override
   Future<List<Site>> filterActivities(
-      {int take = 10,
-      int skip = 0,
-      String? tag,
-      String? minPrice,
-      String? maxPrice,
-      String? rating,
-      String? ratingSort,
-      String? duration}) async {
+      {required FilterRequestBody filterRequestBody}) async {
     var response = await networkRepository.get(APIEndpoint.filterActivities,
-        parameters: _removeNullAndEmptyValues({
-          'take': take.toString(),
-          'skip': skip.toString(),
-          'tag': tag,
-          'minPrice': minPrice,
-          'maxPrice': maxPrice,
-          'rating_sort': ratingSort,
-          'duration': duration
-        }));
+        parameters: _removeNullAndEmptyValues(filterRequestBody.toJson()));
     return (response as List)
         .map((e) => SiteJson.fromJson(e).toDomain())
         .toList();
   }
 
-
   @override
-  Future<List<Site>> filterByDate(
-      {int take = 10,
-        int skip = 0,
-       required DateTime dateTime,
-        }) async {
+  Future<List<Site>> filterByDate({
+    int take = 10,
+    int skip = 0,
+    required DateTime dateTime,
+  }) async {
     var response = await networkRepository.get(APIEndpoint.filterActivities,
         parameters: _removeNullAndEmptyValues({
           'take': take.toString(),
@@ -208,16 +211,17 @@ class RestAPIRepository implements DatabaseRepository {
   }
 
   @override
-  Future<List<ReviewRating>> getReviewsOfSite({required Site site,int take = 10, int skip = 0}) async {
+  Future<List<ProductReview>> getReviewsOfSite(
+      {required Site site, int take = 10, int skip = 0}) async {
     var response =
         await networkRepository.get(APIEndpoint.getReviews, parameters: {
       'type': site.provider,
       'code': site.productCode,
-      'take':take.toString(),
-      'skip':skip.toString()
+      'take': take.toString(),
+      'skip': skip.toString()
     });
     return (response as List)
-        .map((e) => ReviewRatingJson.fromJson(e).toDomain())
+        .map((e) => ProductReviewJson.fromJson(e).toDomain())
         .toList();
   }
 
@@ -231,17 +235,72 @@ class RestAPIRepository implements DatabaseRepository {
   }
 
   @override
-  Future<bool> deleteAccount() {
-    // TODO: implement deleteAccount
-    throw UnimplementedError();
+  Future<void> deleteAccount() async {
+    await networkRepository.delete(APIEndpoint.deleteAccount,{});
   }
 
   @override
-  Future<bool> changePassword(
+  Future<void> changePassword(
       {required String currentPassword, required String newPassword}) async {
+   await networkRepository.put(APIEndpoint.changePassword, {
+      "oldPassword": currentPassword,
+      "newPassword": newPassword,
+      "confirmPassword": newPassword,
+    });
+  }
 
-    var response = await networkRepository.patch(APIEndpoint.changePassword,
-        {"password": newPassword, "currentPassword": currentPassword},useToken: true);
-    return response['success'];
+  @override
+  Future<Site> getSiteById({required String id}) async {
+    var response = await networkRepository.get(
+      "${APIEndpoint.getSiteById}/$id",
+    );
+    return SiteJson.fromJson(response).toDomain();
+  }
+
+  @override
+  Future<BookingResponse> checkAvailability(
+      {required Site site, required DateTime date}) async {
+    var response = await networkRepository
+        .get("${APIEndpoint.checkAvailability}/${site.id}", parameters: {
+      "provider": site.provider,
+      "startDate": DateFormat('yyyy-MM-dd').format(date),
+    },getAllResponse: true);
+    return BookingResponseJson.fromJson(response).toDomain();
+  }
+
+  @override
+  Future<void> changeCurrency({required AppCurrency currency}) async {
+    await networkRepository.post(
+      APIEndpoint.changeCurrency,
+      {
+        "currencyType": currency.value,
+        "clientId": await deviceInfoService.getDeviceId(),
+      },
+    );
+  }
+
+  @override
+  Future<HomeData> getHomeData() async {
+    var response = await networkRepository.get(APIEndpoint.getHomeData);
+    return HomeData(
+      popularDestinations: (response['popularDestination']['data'] as List)
+          .map((e) => CityJson.fromJson(e).toDomain())
+          .toList(),
+      sightSeeingTours: (response['getSightSeeingTours']['data'] as List)
+          .map((e) => SiteJson.fromJson(e).toDomain())
+          .toList(),
+      topActivities: (response['topActivities']['data'] as List)
+          .map((e) => TopActivityJson.fromJson(e).toDomain())
+          .toList(),
+      worldWideAttractions: (response['worldWideAttractions']['data'] as List)
+          .map((e) => SiteJson.fromJson(e).toDomain())
+          .toList(),
+      waterAdventures: (response['waterAdventures']['data'] as List)
+          .map((e) => SiteJson.fromJson(e).toDomain())
+          .toList(),
+      exploreMore: (response['exploreMore']['data'] as List)
+          .map((e) => SiteJson.fromJson(e).toDomain())
+          .toList(),
+    );
   }
 }

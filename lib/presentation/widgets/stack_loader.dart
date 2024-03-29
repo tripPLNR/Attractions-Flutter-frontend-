@@ -25,7 +25,7 @@ class StackLoader extends StatelessWidget {
               color: Theme.of(context).primaryColor
             ),
             padding: EdgeInsets.symmetric(vertical: 20.h,horizontal: 20.w),
-            margin: EdgeInsets.symmetric(horizontal: 100.w),
+            margin: EdgeInsets.symmetric(horizontal: 80.w),
 
             child:Center(
               child: Column(
@@ -34,7 +34,7 @@ class StackLoader extends StatelessWidget {
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   SizedBox(height: 20.h,),
-                  Text("Please wait.... $title",style: AppStyle.authSubHeadingStyle(context).copyWith(
+                  Text("Please wait.... $title",style: AppStyle.headingH3(context).copyWith(
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   textAlign: TextAlign.center,

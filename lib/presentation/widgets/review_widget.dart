@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:triplaner/domain/entities/review_rating.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:triplaner/domain/entities/product_review.dart';
 import 'package:triplaner/presentation/widgets/custom_star_rating.dart';
+import 'package:triplaner/util/app_assets.dart';
+import 'package:triplaner/util/app_extentions.dart';
 import 'package:triplaner/util/app_style.dart';
 import 'package:triplaner/presentation/widgets/custom_readmore.dart';
 
 class ReviewWidget extends StatelessWidget {
-  final ReviewRating reviewRating;
+  final ProductReview reviewRating;
   final VoidCallback? onTap;
   final bool hideDivider;
 
@@ -27,46 +30,69 @@ class ReviewWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "${reviewRating.userName} ",
-                  style:AppStyle.siteDetailHeading(context),
+                SvgPicture.asset(
+                  AppAssets.profileAvatar,
+                  height: 50.h,
                 ),
-                Text(
-                  "${reviewRating.date} ",
-                  style: TextStyle(
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -0.2,
-                    color: Theme.of(context).colorScheme.tertiaryContainer
+                SizedBox(
+                  width: 10.w,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${reviewRating.userName.toString().capitalize()} ",
+                      style: AppStyle.siteDetailHeading(context)
+                          .copyWith(fontSize: 18.sp),
+                    ),
+                    SizedBox(height: 5.h,),
+                    Row(
+                      children: [
+                        CustomStarRating(
+                          rating: reviewRating.rating ?? 0,
+                          size: 18.h,
+                        ),
+                        Text(
+                          " ${reviewRating.rating}",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .tertiaryContainer,
+                              fontSize: 16.sp),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      "${reviewRating.publishedDate} ",
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.2,
+                        color: Theme.of(context).colorScheme.tertiaryContainer,
+                      ),
+                    ),
                   ),
                 )
               ],
             ),
-            Row(
-              children: [
-                CustomStarRating(
-                  rating: reviewRating.rating ?? 0,
-                  size: 18.h,
-                ),
-                Text(
-                  " ${reviewRating.rating}",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0,
-                      color: Theme.of(context).colorScheme.tertiaryContainer,
-                      fontSize: 16.sp),
-                ),
-              ],
-            ),
             SizedBox(
-              height: 2.h,
+              height: 5.h,
             ),
-            CustomReadMore(
-                text: "${reviewRating.review}",
-              style: AppStyle.siteDetailSubHeading(context).copyWith(fontSize: 19.sp,letterSpacing: -0.2),
-
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: CustomReadMore(
+                text: "${reviewRating.comment}",
+                style: AppStyle.siteDetailSubHeading(context),
+              ),
             ),
             hideDivider
                 ? SizedBox(

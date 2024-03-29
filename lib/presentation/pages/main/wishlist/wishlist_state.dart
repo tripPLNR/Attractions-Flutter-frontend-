@@ -1,8 +1,9 @@
+import 'package:equatable/equatable.dart';
 import 'package:triplaner/domain/entities/site.dart';
 
 import 'wishlist_initial_params.dart';
 
-class WishlistState {
+class WishlistState extends Equatable{
   final bool loading;
   final List<Site> sites;
 
@@ -16,4 +17,8 @@ class WishlistState {
         loading: loading ?? this.loading,
         sites: sites ?? this.sites,
       );
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [loading,sites];
 }

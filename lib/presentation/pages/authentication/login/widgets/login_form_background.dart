@@ -27,20 +27,20 @@ class LoginFormBackground extends StatelessWidget {
                   child: SvgPicture.asset(
                     AppAssets.circularBack,
                     color: Theme.of(context).colorScheme.surface,
+                    width: 35.w,
                   ),
                 ),
               ),
               SizedBox(
                 height: 16.h,
               ),
-              const LoginTopText(),
             ],
           ),
         ),
         Expanded(
           child: Container(
             width: 1.sw,
-            margin: EdgeInsets.only(top: 11.h),
+            margin: EdgeInsets.only(top: 50.h),
             padding:
             EdgeInsets.symmetric(horizontal: 24.h, vertical: 16.h),
             decoration: BoxDecoration(

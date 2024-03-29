@@ -29,7 +29,7 @@ class CityCard extends StatelessWidget {
             ),
             SizedBox(height: 4.h,),
             Text(
-              "${city.name}",
+              "${city.cityName}",
               style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w700,
@@ -37,7 +37,7 @@ class CityCard extends StatelessWidget {
                   color: Theme.of(context).colorScheme.onBackground),
             ),
             Text(
-              "${city.country}",
+              "${city.countryName}",
               style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,

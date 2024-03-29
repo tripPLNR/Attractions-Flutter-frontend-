@@ -27,7 +27,7 @@ class ChangePasswordUseCase {
     debugPrint("CURRENT PASSWORD : $currentPassword");
     debugPrint("NEW PASSWORD : $newPassword");
 
-    await databaseRepository.changePassword(currentPassword: currentPassword, newPassword: newPassword);
+    await databaseRepository.changePassword(currentPassword: currentPassword, newPassword: newPassword,);
     await loginUseCase.execute(email: userStore.state.email!, password: newPassword);
 
     return true;

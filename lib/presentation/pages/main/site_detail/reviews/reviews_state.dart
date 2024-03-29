@@ -1,4 +1,5 @@
-import '../../../../../domain/entities/review_rating.dart';
+import 'package:triplaner/domain/entities/product_review.dart';
+
 import 'reviews_initial_params.dart';
 
 class ReviewsState {
@@ -7,7 +8,7 @@ class ReviewsState {
   final bool noMoreRecord;
 
 
-  final List<ReviewRating> reviewRating;
+  final List<ProductReview> reviewRating;
 
   const ReviewsState(
       {required this.loading,
@@ -18,13 +19,13 @@ class ReviewsState {
       });
 
   factory ReviewsState.initial({required ReviewsInitialParams initialParams}) =>
-      const ReviewsState(loading: false, reviewRating: [], loadingMore: false,noMoreRecord:false);
+       ReviewsState(loading: false, reviewRating: initialParams.site.productReviews??[], loadingMore: false,noMoreRecord:false);
 
   ReviewsState copyWith(
           {bool? loading,
            bool? noMoreRecord,
 
-          List<ReviewRating>? reviewRating,
+          List<ProductReview>? reviewRating,
           bool? loadingMore}) =>
       ReviewsState(
         loading: loading ?? this.loading,

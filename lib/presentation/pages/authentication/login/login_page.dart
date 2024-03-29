@@ -44,7 +44,7 @@ class _LoginState extends State<LoginPage> {
     return Scaffold(
       body: Stack(
         children: [
-          Image.asset(AppAssets.loginTop),
+          Image.asset(AppAssets.aboutUsHeader),
           Padding(
             padding: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
             child: BlocBuilder<LoginCubit, LoginState>(
@@ -86,7 +86,7 @@ class _LoginState extends State<LoginPage> {
                               child: TextButton(
                                   onPressed: cubit.forgetAction,
                                   child: Text(
-                                    "Forget Password ?",
+                                    "Forgot Password ?",
                                     style: TextStyle(
                                         letterSpacing: 0,
                                         fontSize: 14.sp,

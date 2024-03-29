@@ -21,13 +21,4 @@ class Attraction {
     sites=[];
   }
 
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
-    if (this.sites != null) {
-      data['data'] = this.sites!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
 }

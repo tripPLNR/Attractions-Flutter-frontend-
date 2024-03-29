@@ -1,20 +1,25 @@
 import 'dart:math';
 
+import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:triplaner/data/models/review_rating_json.dart';
+import 'package:triplaner/domain/entities/booking_response.dart';
 import 'package:triplaner/domain/entities/site.dart';
 import 'package:triplaner/domain/entities/user.dart';
 import 'package:triplaner/domain/stores/user_store.dart';
 import 'package:triplaner/domain/stores/wishlist/wishlist_store.dart';
+import 'package:triplaner/presentation/base_cubit/base_cubit.dart';
 import 'package:triplaner/presentation/pages/main/activites/calendar/calendar_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/check_availability/check_availability_initial_params.dart';
+import 'package:triplaner/presentation/pages/main/site_detail/redirect_popup/redirect_popup_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/reviews/reviews_initial_params.dart';
 import 'package:triplaner/util/alert/app_snackbar.dart';
 import 'package:triplaner/util/app_extentions.dart';
-import '../../../../domain/entities/review_rating.dart';
+import 'package:triplaner/util/app_funtions.dart';
+
+import '../../../../domain/entities/product_review.dart';
 import '../../../../domain/repositories/database_repository.dart';
 import '../../authentication/login/login_initial_params.dart';
 import '../../confirmation/confirmation_initial_params.dart';
@@ -22,7 +27,7 @@ import 'site_detail_initial_params.dart';
 import 'site_detail_state.dart';
 import 'site_detail_navigator.dart';
 
-class SiteDetailCubit extends Cubit<SiteDetailState> {
+class SiteDetailCubit extends BaseCubit<SiteDetailState> {
   SiteDetailNavigator navigator;
   SiteDetailInitialParams initialParams;
   AppSnackBar snackBar;
@@ -41,26 +46,43 @@ class SiteDetailCubit extends Cubit<SiteDetailState> {
 
   BuildContext get context => navigator.context;
 
-  /// TODO: MOVE THIS TO CUBIT AND REFACTOR CODE
   final ScrollController scrollController = ScrollController();
 
   /// starting dummy positions for widgets
   double overViewStartingIndex = 0;
   double includesStartingIndex = 590;
   double excludesStartingIndex = 870;
+  double locationStartingIndex = 0;
   double ratingStartingIndex = 1080;
+  double cancellationPolicyStartingIndex = 0;
 
   /// widgets keys for scrolling to desired position
   final GlobalKey overViewWidgetKey = GlobalKey();
   final GlobalKey includesWidgetKey = GlobalKey();
   final GlobalKey excludesWidgetKey = GlobalKey();
+  final GlobalKey locationWidgetKey = GlobalKey();
   final GlobalKey reviewWidgetKey = GlobalKey();
+  final GlobalKey cancellationPolicyWidgetKey = GlobalKey();
 
   onInit() {
+    _getSiteDetails();
     _listenToWishList();
-    _getReviewsOfSite();
-    _updateMenuLength();
     _addScrollListener();
+  }
+
+  _getSiteDetails({String? siteId}) async {
+    try {
+      emit(state.copyWith(loading: true,showAppbar: false));
+      Site site = await databaseRepository.getSiteById(id: siteId ?? initialParams.site.id!);
+      emit(state.copyWith(site: site, reviewsRatings: site.productReviews,similarExperiences: []));
+      _updateMenuLength();
+      getAndSetOffsets();
+      checkAvailabilityForDate(DateTime.now());
+    } catch (e) {
+      handleException(e.toString(), context);
+    } finally {
+      emit(state.copyWith(loading: false));
+    }
   }
 
   /// get scroll positions of widgets for scrolling to exact points on menu tap
@@ -69,7 +91,9 @@ class SiteDetailCubit extends Cubit<SiteDetailState> {
     overViewStartingIndex = _getWidgetPosition(overViewWidgetKey);
     includesStartingIndex = _getWidgetPosition(includesWidgetKey);
     excludesStartingIndex = _getWidgetPosition(excludesWidgetKey);
+    locationStartingIndex = _getWidgetPosition(locationWidgetKey);
     ratingStartingIndex = _getWidgetPosition(reviewWidgetKey);
+    cancellationPolicyStartingIndex = _getWidgetPosition(cancellationPolicyWidgetKey);
     debugPrint("OVERVIEW : $overViewStartingIndex");
     debugPrint("INCLUDES : $includesStartingIndex");
     debugPrint("EXCLUDES : $excludesStartingIndex");
@@ -79,7 +103,7 @@ class SiteDetailCubit extends Cubit<SiteDetailState> {
   double _getWidgetPosition(GlobalKey widgetKey) {
     try {
       RenderBox renderBox =
-          widgetKey.currentContext!.findRenderObject() as RenderBox;
+      widgetKey.currentContext!.findRenderObject() as RenderBox;
       Offset widgetOffset = renderBox.localToGlobal(Offset.zero);
       double currentOffset = scrollController.position.pixels;
       debugPrint("Widget offset value is : $widgetOffset");
@@ -87,11 +111,11 @@ class SiteDetailCubit extends Cubit<SiteDetailState> {
       return widgetOffset.dy - 140.h;
     } catch (e) {
       debugPrint(e.toString());
-      return 100000;
+      return 0;
     }
   }
 
-  navigateToTabSection(String menu) {
+  navigateToTabSection(String menu) async {
     switch (menu) {
       case 'Overview':
         _scrollToPosition(overViewStartingIndex);
@@ -102,14 +126,19 @@ class SiteDetailCubit extends Cubit<SiteDetailState> {
       case 'Excludes':
         _scrollToPosition(excludesStartingIndex);
         break;
-      case 'Review':
+      case 'Location':
+        _scrollToPosition(locationStartingIndex);
+        break;
+      case 'Reviews':
         _scrollToPosition(ratingStartingIndex);
+        break;
+      case 'Cancellation Policy':
+        _scrollToPosition(cancellationPolicyStartingIndex);
         break;
     }
   }
 
   _scrollToPosition(double offset) {
-    debugPrint("Scroll offer ${offset}");
     scrollController.animateTo(
       offset,
       duration: const Duration(milliseconds: 500),
@@ -119,23 +148,27 @@ class SiteDetailCubit extends Cubit<SiteDetailState> {
   }
 
   _updateMenuLength() {
+    List<String> updatedMenu = List.from(state.menus);
     if (state.site.inclusions!.isEmpty) {
-      state.menus.remove("Includes");
-    } else if (state.site.exclusions!.isEmpty) {
-      state.menus.remove("Excludes");
+      updatedMenu.remove("Includes");
     }
-    emit(state.copyWith(menus: state.menus, selectedMenuIndex: 0));
+    if (state.site.exclusions!.isEmpty) {
+      updatedMenu.remove("Excludes");
+    }
+    if (state.site.latitude == null || state.site.latitude == 0) {
+      updatedMenu.remove("Location");
+    }
+    emit(state.copyWith(menus: updatedMenu, selectedMenuIndex: 0));
   }
 
-  updateSelectedMenu(int index) {
+  updateSelectedMenu(int index) async {
     emit(state.copyWith(selectedMenuIndex: index));
   }
 
   getSimilarExperiences() async {
     try {
       /// if we already got then no need to call
-      if (state.similarExperiences.isNotEmpty ||
-          state.loadingSimilarExperiences) return;
+      if (state.similarExperiences.isNotEmpty || state.loadingSimilarExperiences) return;
       emit(state.copyWith(loadingSimilarExperiences: true));
       List<Site> sites = await databaseRepository.getSimilarExperiences(
           siteId: state.site.id!, take: 5);
@@ -152,15 +185,8 @@ class SiteDetailCubit extends Cubit<SiteDetailState> {
 
   similarExperienceTap(Site site) {
     try {
-      _scrollToPosition(0);
-      sitesStacks.add(state.site);
-      emit(state.copyWith(
-          site: site,
-          similarExperiences: [],
-          reviewsRatings: [],
-          menus: ["Overview", "Includes", "Excludes", "Review"]));
-      _getReviewsOfSite();
-      _updateMenuLength();
+       sitesStacks.add(state.site);
+      _getSiteDetails(siteId: site.id);
     } catch (e) {
       debugPrint("GOT ERROR : ${e.toString()}");
     }
@@ -179,15 +205,18 @@ class SiteDetailCubit extends Cubit<SiteDetailState> {
   }
 
   updateAppbarView(bool show) {
+    if (state.showAppbar == show) return;
     emit(state.copyWith(showAppbar: show));
   }
 
   shareAction() {
-    Share.share('check out my website https://google.com');
+    AppFunctions.shareSite(state.site);
   }
 
-  checkAvailabilityAction() {
-    navigator.openCheckAvailability(const CheckAvailabilityInitialParams());
+  bookNowAction() {
+    navigator.openRedirectPopup(RedirectPopupInitialParams(
+      url: state.site.productUrl??"http://www.google.com",
+    ));
   }
 
   openReviewsPage() {
@@ -225,30 +254,6 @@ class SiteDetailCubit extends Cubit<SiteDetailState> {
     }
   }
 
-  _getReviewsOfSite() async {
-    try {
-      emit(state.copyWith(loadingReviews: true));
-      List<ReviewRating> reviewRating =
-          await databaseRepository.getReviewsOfSite(site: initialParams.site);
-      if (reviewRating.isEmpty) {
-        reviewRating = _generateRandomReviews(
-            (initialParams.site.ratings?.ratings ?? 0)-reviewRating.length,
-            initialParams.site.ratings?.reviewersCount ?? 0);
-      }
-      emit(state.copyWith(
-          reviewsRatings: reviewRating.take(2).toList(),
-          loadingReviews: false));
-    } catch (e) {
-      emit(state.copyWith(loadingReviews: false));
-      debugPrint("Got error while getting reviews${e.toString()}");
-    }
-  }
-
-  updateTextShowMore(bool isTextCollapsed) {
-    emit(state.copyWith(isTextCollapsed: isTextCollapsed));
-    debugPrint("is text colapsed : ${state.isTextCollapsed}");
-  }
-
   void _addScrollListener() {
     scrollController.addListener(() {
       double currentScrollPosition = scrollController.position.pixels;
@@ -258,101 +263,58 @@ class SiteDetailCubit extends Cubit<SiteDetailState> {
       updateAppbarView(currentScrollPosition >= 180);
 
       /// update underline bar below menu
-      if (currentScrollPosition >= ratingStartingIndex &&
-          state.menus.contains("Review")) {
-        updateSelectedMenu(state.menus.length - 1);
+      if (currentScrollPosition >= cancellationPolicyStartingIndex) {
+        updateSelectedMenu((state.menus.indexOf('Cancellation Policy')));
+      } else if (currentScrollPosition >= ratingStartingIndex &&
+          state.menus.contains("Reviews")) {
+        updateSelectedMenu((state.menus.indexOf('Reviews')));
         getSimilarExperiences();
+      } else if (currentScrollPosition >= locationStartingIndex &&
+          state.menus.contains("Location")) {
+        getSimilarExperiences();
+        updateSelectedMenu((state.menus.indexOf('Location')));
       } else if (currentScrollPosition >= excludesStartingIndex &&
           state.menus.contains("Excludes")) {
-        updateSelectedMenu(2);
-        getSimilarExperiences();
+        updateSelectedMenu((state.menus.indexOf('Excludes')));
       } else if (currentScrollPosition >= includesStartingIndex &&
           state.menus.contains("Includes")) {
-        updateSelectedMenu(1);
+        updateSelectedMenu((state.menus.indexOf('Includes')));
       } else if (currentScrollPosition > overViewStartingIndex &&
           state.menus.contains("Overview")) {
-        updateSelectedMenu(0);
-      }
-
-      /// get indexes of menus
-      if (currentScrollPosition == 0.0) {
-        getAndSetOffsets();
+        updateSelectedMenu((state.menus.indexOf('Overview')));
       }
     });
   }
 
-  List<ReviewRating> _generateRandomReviews(
-      double avgStarRating, int numberOfReviews) {
-    if (avgStarRating < 0 || avgStarRating > 5) {
-      throw ArgumentError(
-          'Invalid average star rating. Must be between 0 and 5.');
+  checkAvailabilityForDate(DateTime dateTime) async {
+    try {
+      emit(state.copyWith(
+          checkAvailabilityDate: dateTime, checkingAvailability: true));
+      BookingResponse bookingResponse = await databaseRepository
+          .checkAvailability(site: state.site, date: dateTime);
+      debugPrint("response : ${bookingResponse.toJson()}");
+      emit(state.copyWith(checkingAvailability: false, bookingResponse: bookingResponse));
+
+    } catch (e) {
+      snackBar.show(context: context, info: e.toString());
+      emit(state.copyWith(checkingAvailability: false));
     }
-
-    if (numberOfReviews <= 0) {
-      throw ArgumentError('Number of reviews must be greater than 0.');
-    }
-
-    List<ReviewRating> reviews = [];
-
-    // Generate random ratings
-    List<double> randomRatings =
-        _generateRandomRatings(avgStarRating, numberOfReviews);
-
-    // Populate ReviewRating objects
-    for (int i = 0; i < numberOfReviews; i++) {
-      // Generate random date and time within the last 365 days
-      DateTime randomDate = DateTime.now().subtract(
-        Duration(days: Random().nextInt(365)),
-      );
-      reviews.add(
-        ReviewRating(
-          userName: 'Anonymous User',
-          review: 'No feedback given',
-          rating: double.parse(randomRatings[i].toStringAsFixed(1)),
-          date: randomDate.toDayMonthNameAndYear()
-        ),
-      );
-    }
-
-    return reviews;
   }
+  final EasyInfiniteDateTimelineController horizontalDateController = EasyInfiniteDateTimelineController();
 
-  checkAvailabilityForDate(DateTime dateTime) {
-    emit(state.copyWith(checkAvailabilityDate: dateTime));
-
-    /// TODO: CALL API TO CHECK AVAILABILITY
-  }
-
-  List<double> _generateRandomRatings(
-      double avgStarRating, int numberOfReviews) {
-    Random random = Random();
-    List<double> ratings = [];
-    double totalRating = avgStarRating * numberOfReviews;
-
-    for (int i = 0; i < numberOfReviews - 1; i++) {
-      double randomRating = (totalRating / (numberOfReviews - i)) +
-          (random.nextDouble() - 0.5) * 2;
-      ratings.add(randomRating.clamp(0, 5));
-      totalRating -= randomRating;
-    }
-
-    ratings.add(totalRating.clamp(
-        0, 5)); // Ensure the last rating makes up for any rounding errors
-
-    return ratings;
-  }
 
   selectDate() async {
-    navigator.openCalendar(CalendarInitialParams(
-        onSelectDate: (date) {
-          checkAvailabilityForDate(date);
-        },
-        onClear: () {
-          checkAvailabilityForDate(DateTime.now());
-        }));
+    navigator.openCalendar(CalendarInitialParams(onSelectDate: (date) {
+      checkAvailabilityForDate(date);
+      horizontalDateController.animateToDate(date);
+    }, onClear: () {
+      checkAvailabilityForDate(DateTime.now());
+      horizontalDateController.animateToDate(DateTime.now());
+    }));
   }
 
   clearCheckAvailabilityDate() async {
     checkAvailabilityForDate(DateTime.now());
+    horizontalDateController.animateToDate(DateTime.now());
   }
 }

@@ -10,7 +10,7 @@ class Rating {
   }
 
   Rating.empty() {
-    ratings = 5;
+    ratings = 5.0;
     reviewersCount = 1234;
   }
 

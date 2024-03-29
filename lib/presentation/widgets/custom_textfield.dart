@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,11 +16,11 @@ class CustomTextField extends StatelessWidget {
   String hint;
   Function(String)? onChange;
   Function(String)? onSubmit;
-
   VoidCallback? onTap;
-
   bool? dealAsDate;
   bool? dealAsTime;
+  bool whenTypingEnds;
+
   bool? hide;
   bool? readOnly;
   bool? disable;
@@ -63,7 +65,7 @@ class CustomTextField extends StatelessWidget {
       this.inputFormatters,
       this.showCurrentCharacters = false,
       this.autoFocus = false,
-
+      this.whenTypingEnds = false,
       this.disable,
       this.isDetail,
       this.keyboard,
@@ -107,7 +109,7 @@ class CustomTextField extends StatelessWidget {
               initialValue: initialValue,
               textAlignVertical: TextAlignVertical.top,
               expands: isDetail != null ? true : false,
-              onChanged: onChange,
+              onChanged:onChange,
               onFieldSubmitted: onSubmit,
               autofocus: autoFocus,
               inputFormatters: inputFormatters,
@@ -182,9 +184,8 @@ class CustomTextField extends StatelessWidget {
                           padding: EdgeInsets.only(right: 20.w),
                           child: SvgPicture.asset(
                             suffixPath!,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .tertiaryContainer,
+                            color:
+                                Theme.of(context).colorScheme.tertiaryContainer,
                           ),
                         ),
                       ),
@@ -260,4 +261,19 @@ unFocusedBorder(BuildContext context, {bool isActive = false}) {
       borderSide:
           BorderSide(color: Theme.of(context).colorScheme.surface, width: 1),
       borderRadius: BorderRadius.circular(40.r));
+}
+
+class Debouncer {
+  final int milliseconds;
+
+  Timer? _timer;
+
+  Debouncer({this.milliseconds = 500});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer!.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
 }

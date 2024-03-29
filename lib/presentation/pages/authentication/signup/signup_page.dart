@@ -64,6 +64,7 @@ class _SignupState extends State<SignupPage> {
                               color: Theme.of(context).colorScheme.primary,
                             ),
                           )),
+                      SizedBox(height: 30.h,),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(

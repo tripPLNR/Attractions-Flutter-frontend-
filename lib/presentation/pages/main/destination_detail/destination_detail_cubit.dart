@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:triplaner/domain/entities/activity_result.dart';
 import 'package:triplaner/domain/entities/city.dart';
 import 'package:triplaner/domain/entities/popular_gateway_detail.dart';
 import 'package:triplaner/domain/entities/top_activity.dart';
@@ -39,16 +40,16 @@ class DestinationDetailCubit extends Cubit<DestinationDetailState> {
   BuildContext get context => navigator.context;
 
   onInit() {
-    _getPopularGatewayDetails();
+    _getPopularDestinationDetails();
     _getUncoverMore();
     _listenToWishList();
   }
 
-  _getPopularGatewayDetails() async {
+  _getPopularDestinationDetails() async {
     try {
       emit(state.copyWith(loading: true));
-      PopularGatewayDetail popularGatewayDetail =
-          await databaseRepository.getPopularGatewayDetail(city: state.city);
+      PopularGatewayDetail popularGatewayDetail = await databaseRepository
+          .getPopularDestinationDetail(city: state.city);
       emit(state.copyWith(
           loading: false, popularGatewayDetail: popularGatewayDetail));
     } catch (e) {
@@ -60,12 +61,12 @@ class DestinationDetailCubit extends Cubit<DestinationDetailState> {
   _getUncoverMore() async {
     try {
       emit(state.copyWith(loadingUncover: true));
-      List<Site> uncoverMore =
-          await databaseRepository.getUncoverMore(city: state.city);
+      ActivityResult activityResult = await databaseRepository.getUncoverMore(city: state.city);
       emit(state.copyWith(
           loadingUncover: false,
-          unCoverMore: uncoverMore,
-          noMoreUncover: uncoverMore.isEmpty));
+          unCoverMore: activityResult.sites,
+          unCoverCount:activityResult.count,
+          noMoreUncover: activityResult.sites?.isEmpty));
     } catch (e) {
       emit(state.copyWith(loadingUncover: false));
       snackBar.show(context: context, info: e.toString());
@@ -75,13 +76,14 @@ class DestinationDetailCubit extends Cubit<DestinationDetailState> {
   getMoreUncover() async {
     try {
       emit(state.copyWith(loadingMoreUncover: true));
-      List<Site> uncoverMore = await databaseRepository.getUncoverMore(
+      ActivityResult activityResult = await databaseRepository.getUncoverMore(
           city: state.city, skip: state.unCoverMore.length, take: 10);
-      state.unCoverMore.addAll(uncoverMore);
+      state.unCoverMore.addAll(activityResult.sites ?? []);
       emit(state.copyWith(
-          loadingMoreUncover: false,
-          unCoverMore: state.unCoverMore,
-          noMoreUncover: uncoverMore.isEmpty));
+        loadingMoreUncover: false,
+        unCoverMore: state.unCoverMore,
+        noMoreUncover: activityResult.sites?.isEmpty,
+      ));
     } catch (e) {
       emit(state.copyWith(loadingMoreUncover: false));
       snackBar.show(context: context, info: e.toString());
@@ -94,11 +96,8 @@ class DestinationDetailCubit extends Cubit<DestinationDetailState> {
 
   activityAction(TopActivity activity) {
     navigator.openActivities(ActivitiesInitialParams(
-      endpoint: APIEndpoint.getTopActivityDetail,
-      parameters: {
-        "activity": activity.name,
-        "gatewayId": state.city.id,
-      },
+      endpoint:
+          "${APIEndpoint.getPopularDestinationTopActivityDetail}/${activity.destinationId}/${activity.id}",
       title: activity.name ?? "N/A",
     ));
   }

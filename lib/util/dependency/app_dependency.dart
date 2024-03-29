@@ -7,6 +7,7 @@ import 'package:triplaner/domain/repositories/auth_repository.dart';
 import 'package:triplaner/domain/repositories/database_repository.dart';
 import 'package:triplaner/domain/repositories/local_storage_repository.dart';
 import 'package:triplaner/domain/stores/bottom_nav_store.dart';
+import 'package:triplaner/domain/stores/currency_store.dart';
 import 'package:triplaner/domain/stores/filter/filter_store_store.dart';
 import 'package:triplaner/domain/stores/user_store.dart';
 import 'package:triplaner/domain/stores/wishlist/wishlist_store.dart';
@@ -16,6 +17,8 @@ import 'package:triplaner/domain/usecases/create_account_usecase.dart';
 import 'package:triplaner/domain/usecases/delete_account_usecase.dart';
 import 'package:triplaner/domain/usecases/login_usecase.dart';
 import 'package:triplaner/domain/usecases/logout_usecase.dart';
+import 'package:triplaner/domain/usecases/save_new_currency_usecase.dart';
+import 'package:triplaner/domain/usecases/start_currency_session_usecase.dart';
 import 'package:triplaner/network/network_repository.dart';
 import 'package:triplaner/presentation/pages/authentication/forget_password/forget_password_cubit.dart';
 import 'package:triplaner/presentation/pages/authentication/forget_password/forget_password_initial_params.dart';
@@ -23,6 +26,12 @@ import 'package:triplaner/presentation/pages/authentication/forget_password/forg
 import 'package:triplaner/presentation/pages/authentication/login/login_cubit.dart';
 import 'package:triplaner/presentation/pages/authentication/login/login_initial_params.dart';
 import 'package:triplaner/presentation/pages/authentication/login/login_navigator.dart';
+import 'package:triplaner/presentation/pages/authentication/otp/otp_cubit.dart';
+import 'package:triplaner/presentation/pages/authentication/otp/otp_initial_params.dart';
+import 'package:triplaner/presentation/pages/authentication/otp/otp_navigator.dart';
+import 'package:triplaner/presentation/pages/authentication/reset_password/reset_password_cubit.dart';
+import 'package:triplaner/presentation/pages/authentication/reset_password/reset_password_initial_params.dart';
+import 'package:triplaner/presentation/pages/authentication/reset_password/reset_password_navigator.dart';
 import 'package:triplaner/presentation/pages/authentication/signup/signup_cubit.dart';
 import 'package:triplaner/presentation/pages/authentication/signup/signup_initial_params.dart';
 import 'package:triplaner/presentation/pages/authentication/signup/signup_navigator.dart';
@@ -38,6 +47,9 @@ import 'package:triplaner/presentation/pages/main/account/account_navigator.dart
 import 'package:triplaner/presentation/pages/main/account/change_password/change_password_cubit.dart';
 import 'package:triplaner/presentation/pages/main/account/change_password/change_password_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/account/change_password/change_password_navigator.dart';
+import 'package:triplaner/presentation/pages/main/account/currencies/currencies_cubit.dart';
+import 'package:triplaner/presentation/pages/main/account/currencies/currencies_initial_params.dart';
+import 'package:triplaner/presentation/pages/main/account/currencies/currencies_navigator.dart';
 import 'package:triplaner/presentation/pages/main/account/privacy_policy/privacy_policy_cubit.dart';
 import 'package:triplaner/presentation/pages/main/account/privacy_policy/privacy_policy_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/account/privacy_policy/privacy_policy_navigator.dart';
@@ -69,6 +81,9 @@ import 'package:triplaner/presentation/pages/main/search/search_navigator.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/check_availability/check_availability_cubit.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/check_availability/check_availability_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/check_availability/check_availability_navigator.dart';
+import 'package:triplaner/presentation/pages/main/site_detail/redirect_popup/redirect_popup_cubit.dart';
+import 'package:triplaner/presentation/pages/main/site_detail/redirect_popup/redirect_popup_initial_params.dart';
+import 'package:triplaner/presentation/pages/main/site_detail/redirect_popup/redirect_popup_navigator.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/reviews/reviews_cubit.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/reviews/reviews_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/reviews/reviews_navigator.dart';
@@ -84,6 +99,8 @@ import 'package:triplaner/presentation/pages/no_internet/no_internet_navigator.d
 import 'package:triplaner/presentation/pages/splash/splash_cubit.dart';
 import 'package:triplaner/presentation/pages/splash/splash_initial_params.dart';
 import 'package:triplaner/presentation/pages/splash/splash_navigator.dart';
+import 'package:triplaner/util/services/deep_linking/deep_link_service.dart';
+import 'package:triplaner/util/services/device_info/device_info_service.dart';
 import 'package:triplaner/util/services/internet/internet_connection_service.dart';
 import 'package:triplaner/util/services/location/location_service.dart';
 
@@ -103,19 +120,30 @@ class AppDependency {
 
     /// services
     getIt.registerSingleton<LocationService>(LocationService());
+    getIt.registerSingleton<DeviceInfoService>(DeviceInfoService());
+
     // getIt.registerSingleton<InternetConnectionService>(
     //     InternetConnectionService(appNavigator: getIt())..onInit());
 
     /// register repos layer repository
     getIt.registerSingleton<NetworkRepository>(
-        NetworkRepository(localStorageRepository: getIt()));
+        NetworkRepository(localStorageRepository: getIt())..initialize());
     getIt.registerSingleton<AuthRepository>(
         RestAPIAuthRepository(networkRepository: getIt()));
-    getIt.registerSingleton<DatabaseRepository>(
-        RestAPIRepository(networkRepository: getIt()));
+    getIt.registerSingleton<DatabaseRepository>(RestAPIRepository(
+      networkRepository: getIt(),
+      deviceInfoService: getIt(),
+    ));
+
+    /// deep linking
+
+    getIt.registerSingleton<DeepLinkService>(
+        DeepLinkService(databaseRepository: getIt()));
 
     /// stores
     getIt.registerSingleton<UserStore>(UserStore());
+    getIt.registerSingleton<CurrencyStore>(CurrencyStore());
+
     getIt.registerSingleton<WishListStore>(WishListStore(
       databaseRepository: getIt(),
       snackBar: getIt(),
@@ -163,6 +191,16 @@ class AppDependency {
       userStore: getIt(),
       loginUseCase: getIt(),
     ));
+    getIt.registerSingleton<SaveNewCurrencyUseCase>(SaveNewCurrencyUseCase(
+      localStorageRepository: getIt(),
+      databaseRepository: getIt(),
+      currencyStore: getIt(),
+    ));
+    getIt.registerSingleton<StartCurrencySessionUseCase>(
+        StartCurrencySessionUseCase(
+      localStorageRepository: getIt(),
+      databaseRepository: getIt(),
+    ));
 
     /// register cubits
     ///
@@ -173,6 +211,7 @@ class AppDependency {
               initialParams: param1,
               snackBar: getIt(),
               checkUserLoginUseCase: getIt(),
+              startCurrencySessionUseCase: getIt(),
             ));
     getIt.registerSingleton<HomeNavigator>(HomeNavigator(getIt()));
     getIt.registerFactoryParam<HomeCubit, HomeInitialParams, dynamic>(
@@ -185,6 +224,7 @@ class AppDependency {
               wishListStore: getIt(),
               bottomNavStore: getIt(),
               userStore: getIt(),
+              currencyStore: getIt(),
             ));
 
     getIt.registerSingleton<DestinationDetailNavigator>(
@@ -211,6 +251,7 @@ class AppDependency {
               userStore: getIt(),
               wishListStore: getIt(),
               filterStore: getIt(),
+              locationService: getIt(),
             ));
 
     getIt.registerSingleton<SiteDetailNavigator>(SiteDetailNavigator(getIt()));
@@ -233,6 +274,7 @@ class AppDependency {
               initialParams: param1,
               snackBar: getIt(),
               bottomNavStore: getIt(),
+              deepLinkService: getIt(),
             ));
     getIt.registerSingleton<SearchNavigator>(SearchNavigator(getIt()));
     getIt.registerFactoryParam<SearchCubit, SearchInitialParams, dynamic>(
@@ -255,6 +297,7 @@ class AppDependency {
               userStore: getIt(),
               wishListStore: getIt(),
               databaseRepository: getIt(),
+              currencyStore: getIt(),
             ));
     getIt.registerSingleton<AccountNavigator>(AccountNavigator(getIt()));
     getIt.registerFactoryParam<AccountCubit, AccountInitialParams, dynamic>(
@@ -374,6 +417,44 @@ class AppDependency {
         (param1, param2) => NoInternetCubit(
               navigator: getIt(),
               initialParams: param1,
+            ));
+
+    getIt.registerSingleton<CurrenciesNavigator>(CurrenciesNavigator(getIt()));
+    getIt.registerFactoryParam<
+            CurrenciesCubit, CurrenciesInitialParams, dynamic>(
+        (param1, param2) => CurrenciesCubit(
+              navigator: getIt(),
+              initialParams: param1,
+              localStorageRepository: getIt(),
+              saveNewCurrencyUseCase: getIt(),
+            ));
+    getIt.registerSingleton<RedirectPopupNavigator>(
+        RedirectPopupNavigator(getIt()));
+    getIt.registerFactoryParam<RedirectPopupCubit,
+            RedirectPopupInitialParams, dynamic>(
+        (param1, param2) => RedirectPopupCubit(
+              navigator: getIt(),
+              initialParams: param1,
+            ));
+
+    getIt.registerSingleton<OtpNavigator>(OtpNavigator(getIt()));
+    getIt.registerFactoryParam<OtpCubit, OtpInitialParams, dynamic>(
+        (param1, param2) => OtpCubit(
+              navigator: getIt(),
+              initialParams: param1,
+              authRepository: getIt(),
+              snackBar: getIt(),
+            ));
+
+    getIt.registerSingleton<ResetPasswordNavigator>(
+        ResetPasswordNavigator(getIt()));
+    getIt.registerFactoryParam<ResetPasswordCubit,
+            ResetPasswordInitialParams, dynamic>(
+        (param1, param2) => ResetPasswordCubit(
+              navigator: getIt(),
+              initialParams: param1,
+              authRepository: getIt(),
+              snackBar: getIt(),
             ));
   }
 }

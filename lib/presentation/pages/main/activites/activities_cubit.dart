@@ -1,13 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:triplaner/domain/entities/activity_result.dart';
+import 'package:triplaner/domain/entities/location_info.dart';
 import 'package:triplaner/domain/entities/site.dart';
 import 'package:triplaner/domain/stores/filter/filter_store_store.dart';
 import 'package:triplaner/domain/stores/user_store.dart';
 import 'package:triplaner/domain/stores/wishlist/wishlist_store.dart';
+import 'package:triplaner/network/api_endpoint.dart';
 import 'package:triplaner/presentation/pages/main/activites/calendar/calendar_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/activites/filter/filter_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/site_detail/site_detail_initial_params.dart';
 import 'package:triplaner/util/app_assets.dart';
+import 'package:triplaner/util/services/location/location_service.dart';
 import '../../../../domain/entities/user.dart';
 import '../../../../domain/repositories/database_repository.dart';
 import '../../../../util/alert/app_snackbar.dart';
@@ -24,7 +28,7 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
   DatabaseRepository databaseRepository;
   UserStore userStore;
   FilterStore filterStore;
-
+  LocationService locationService;
   WishListStore wishListStore;
 
   ActivitiesCubit({
@@ -35,6 +39,7 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
     required this.wishListStore,
     required this.userStore,
     required this.filterStore,
+    required this.locationService,
   }) : super(ActivitiesState.initial(initialParams: initialParams));
 
   BuildContext get context => navigator.context;
@@ -67,21 +72,29 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
   _listenToFilter() {
     filterStore.stream.listen((event) {
       emit(state.copyWith(
-        loading: event.loading,
-        sites: event.filteredSites,
-        noMoreSites: event.noMoreRecord,
-        title: event.selectedActivity.isEmpty?initialParams.title:event.selectedActivity
-      ));
+          loading: event.loading,
+          sites: event.filteredSites,
+          noMoreSites: event.noMoreRecord,
+          title: event.selectedActivity.isEmpty
+              ? initialParams.title
+              : event.selectedActivity));
     });
   }
 
   _getSitesFromEndpoint() async {
     try {
       emit(state.copyWith(loading: true));
-      List<Site> sites = await databaseRepository.getSitesFromEndpoint(
-          endpoint: state.endpointUrl, params: initialParams.parameters);
+      ActivityResult activityResult =
+          await databaseRepository.getSitesFromEndpoint(
+        endpoint: state.endpointUrl,
+        params: state.parameters,
+      );
       emit(state.copyWith(
-          loading: false, sites: sites, noMoreSites: sites.isEmpty));
+        loading: false,
+        sites: activityResult.sites,
+        noMoreSites: activityResult.sites?.isEmpty,
+        totalActivities: activityResult.count,
+      ));
     } catch (e) {
       emit(state.copyWith(loading: false));
       snackBar.show(context: context, info: e.toString());
@@ -91,15 +104,20 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
   getMoreSitesFromEndpoint() async {
     try {
       emit(state.copyWith(loadingMore: true));
-      List<Site> sites = await databaseRepository.getSitesFromEndpoint(
+      ActivityResult activityResult =
+          await databaseRepository.getSitesFromEndpoint(
         endpoint: state.endpointUrl,
         skip: state.sites.length,
         take: 10,
-        params: initialParams.parameters,
+        params: state.parameters,
       );
-      state.sites.addAll(sites);
+      state.sites.addAll(activityResult.sites ?? []);
       emit(state.copyWith(
-          loadingMore: false, sites: state.sites, noMoreSites: sites.isEmpty));
+        loadingMore: false,
+        sites: state.sites,
+        noMoreSites: activityResult.sites?.isEmpty,
+        totalActivities: activityResult.count,
+      ));
     } catch (e) {
       emit(state.copyWith(loadingMore: false));
       snackBar.show(context: context, info: e.toString());
@@ -111,9 +129,13 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
   }
 
   openFilterPage() {
-    navigator.openFilter(FilterInitialParams(clearFilter: () {
-      _getSitesFromEndpoint();
-    }));
+    navigator.openFilter(FilterInitialParams(
+        clearFilter: () {
+          _getSitesFromEndpoint();
+        },
+        searchLocation: initialParams.searchLocation,
+        longitude: initialParams.longitude,
+        latitude: initialParams.latitude));
   }
 
   onScrollReachesEndGetRecord() {
@@ -133,7 +155,12 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
   _getMoreFilterSites() async {
     try {
       emit(state.copyWith(loadingMore: true));
-      await filterStore.getMoreFilterSites(skip: state.sites.length, take: 10);
+      await filterStore.getMoreFilterSites(
+          skip: state.sites.length,
+          take: 10,
+          searchLocation: initialParams.searchLocation,
+          latitude: initialParams.latitude,
+          longitude: initialParams.longitude);
       emit(state.copyWith(loadingMore: false));
     } catch (e) {
       emit(state.copyWith(loadingMore: false));
@@ -141,31 +168,35 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
     }
   }
 
-  // getNextTenRecord() async {
-  //   try {
-  //     /// don't get more record on auto scroll reaches end
-  //     if (state.sites.length >= 30) {
-  //       return;
-  //     }
-  //
-  //     emit(state.copyWith(loadingMore: true));
-  //     List<Site> sites = await databaseRepository.getSitesFromEndpoint(
-  //       endpoint: state.endpointUrl,
-  //       skip: state.sites.length,
-  //       take: 10,
-  //       params: initialParams.parameters,
-  //     );
-  //     state.sites.addAll(sites);
-  //     emit(state.copyWith(loadingMore: false, sites: state.sites));
-  //   } catch (e) {
-  //     emit(state.copyWith(loadingMore: false));
-  //     snackBar.show(context: context, info: e.toString());
-  //   }
-  // }
+  getNearbyAttraction() async {
+    try {
+      emit(state.copyWith(loading: true));
+      LocationInfo locationInfo = await locationService.getCityName();
+      Map<String, dynamic>? previousParam = initialParams.parameters;
+      Map<String, dynamic>? newParams = {
+        "lat": locationInfo.latitude.toString(),
+        "lng": locationInfo.longitude.toString()
+      };
+      if (previousParam == null) {
+        debugPrint("previosu params are ${null}");
+        emit(state.copyWith(parameters: newParams));
+      } else {
+        previousParam.addAll(newParams);
+        emit(state.copyWith(parameters: previousParam));
+      }
 
-  updateFilterButtonVisibility(bool show) {
-    emit(state.copyWith(showFilterButton: show));
+      _getSitesFromEndpoint();
+    } catch (e) {
+      emit(state.copyWith(loading: false));
+      snackBar.show(context: context, info: e.toString());
+    }
   }
+
+  //
+  // updateFilterButtonVisibility(bool show) {
+  //   if(state.showFilterButton==show)return;
+  //   //emit(state.copyWith(showFilterButton: show));
+  // }
 
   _listenToWishList() {
     emit(state.copyWith(wishListSites: wishListStore.state.sites));

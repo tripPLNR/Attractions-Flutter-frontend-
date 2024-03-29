@@ -8,7 +8,7 @@ class FreeRefundWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isAvailable=site.cancellationPolicy?.description.toString().contains("full refund")??false;
+    bool isAvailable=site.isRefundAvailable();
     return isAvailable?Container(
       padding: EdgeInsets.symmetric(vertical: 4.h,horizontal: 7.w),
       decoration: BoxDecoration(

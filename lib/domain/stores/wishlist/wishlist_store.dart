@@ -20,23 +20,24 @@ class WishListStore extends Cubit<WishListStoreState>{
     databaseRepository.getMyWishListSites().then((value){
       emit(state.copyWith(sites: value,loading: false));
     }).onError((error, stackTrace){
+      debugPrint("Error while getting wishlist : ${error.toString()}");
       emit(state.copyWith(loading: false));
     });
   }
 
 
   setWishList(List<Site> sites){
-    emit(state.copyWith(sites: sites));
+    emit(state.copyWith(sites: List.from(sites)));
   }
 
   addIntoWishList(Site site,BuildContext context){
-    List<Site> sites=state.sites;
+    List<Site> sites=List.from(state.sites);
     sites.insert(0, site);
     emit(state.copyWith(sites: sites));
     snackBar.show(context: context, info: "Added to wishlist",snackBarType: SnackBarType.SUCCESS);
   }
   removeFromWishList(Site site,BuildContext context){
-    List<Site> sites=state.sites;
+    List<Site> sites=List.from(state.sites);
     sites.remove(site);
     emit(state.copyWith(sites: sites));
     snackBar.show(context: context, info: "Removed from wishlist",snackBarType: SnackBarType.INFO);

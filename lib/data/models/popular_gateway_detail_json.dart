@@ -24,16 +24,7 @@ class PopularGatewayDetailJson {
     }
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.activities != null) {
-      data['activities'] = this.activities!.map((v) => v.toJson()).toList();
-    }
-    if (this.attractions != null) {
-      data['attractions'] = this.attractions!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
+
 
   PopularGatewayDetail toDomain(){
     return PopularGatewayDetail(

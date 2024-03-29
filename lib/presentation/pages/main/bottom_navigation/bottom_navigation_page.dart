@@ -11,6 +11,7 @@ import 'package:triplaner/presentation/pages/main/search/search_initial_params.d
 import 'package:triplaner/presentation/pages/main/search/search_page.dart';
 import 'package:triplaner/presentation/pages/main/wishlist/wishlist_initial_params.dart';
 import 'package:triplaner/presentation/pages/main/wishlist/wishlist_page.dart';
+import 'package:triplaner/presentation/widgets/stack_loader.dart';
 import 'package:triplaner/util/app_assets.dart';
 import 'package:triplaner/util/app_funtions.dart';
 import '../../../../util/dependency/app_dependency.dart';
@@ -62,9 +63,13 @@ class _BottomNavigationState extends State<BottomNavigationPage> {
           return Scaffold(
               extendBody: true,
             backgroundColor:Theme.of(context).colorScheme.background,
-              body:Padding(
-                padding: EdgeInsets.only(bottom: 65.h),
-                child: pages.elementAt(state.selectedIndex),
+              body:Stack(
+                children: [
+                  pages.elementAt(state.selectedIndex),
+                  StackLoader(
+                    show: state.stackLoading,
+                  )
+                ],
               ),
               bottomNavigationBar: Container(
                 height: Platform.isAndroid?72.h:80.h,
@@ -79,41 +84,39 @@ class _BottomNavigationState extends State<BottomNavigationPage> {
                         color: Colors.black38.withOpacity(0.1),
                         spreadRadius: 0.r,
                         blurRadius: 10.r,
-                        offset: Offset(0, -4),
+                        offset: const Offset(0, -4),
                     )
                   ],
                 ),
-                child: Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16.r),
-                        topRight: Radius.circular(16.r)
-                    ),
-                    child: BottomNavigationBar(
-                      backgroundColor: Theme.of(context).colorScheme.surface,
-                      selectedFontSize: 11.sp,
-                      unselectedFontSize: 11.sp,
-                      selectedItemColor: Theme.of(context).colorScheme.primary,
-                      unselectedItemColor: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
-                      items: <BottomNavigationBarItem>[
-                        customBottomNavigationItem(state.selectedIndex==0?AppAssets.selectedHomeBottomNav:AppAssets.homeBottomNav, "Home", ),
-                        customBottomNavigationItem(state.selectedIndex==1?AppAssets.selectedSearchBottomNav:AppAssets.searchBottomNav, "Search", ),
-                        customBottomNavigationItem(state.selectedIndex==2?AppAssets.selectedWishlistBottomNav:AppAssets.wishlistBottomNav, "Wishlist", ),
-                        customBottomNavigationItem(state.selectedIndex==3?AppAssets.selectedUserBottomNav:AppAssets.userBottomNav, "Account", ),
-                      ],
-                      type: BottomNavigationBarType.fixed,
-                      currentIndex: state.selectedIndex,
-                      selectedLabelStyle: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w500),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16.r),
+                      topRight: Radius.circular(16.r)
+                  ),
+                  child: BottomNavigationBar(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    selectedFontSize: 11.sp,
+                    unselectedFontSize: 11.sp,
+                    selectedItemColor: Theme.of(context).colorScheme.primary,
+                    unselectedItemColor: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                    items: <BottomNavigationBarItem>[
+                      customBottomNavigationItem(state.selectedIndex==0?AppAssets.selectedHomeBottomNav:AppAssets.homeBottomNav, "Home", ),
+                      customBottomNavigationItem(state.selectedIndex==1?AppAssets.selectedSearchBottomNav:AppAssets.searchBottomNav, "Search", ),
+                      customBottomNavigationItem(state.selectedIndex==2?AppAssets.selectedWishlistBottomNav:AppAssets.wishlistBottomNav, "Wishlist", ),
+                      customBottomNavigationItem(state.selectedIndex==3?AppAssets.selectedUserBottomNav:AppAssets.userBottomNav, "Account", ),
+                    ],
+                    type: BottomNavigationBarType.fixed,
+                    currentIndex: state.selectedIndex,
+                    selectedLabelStyle: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500),
 
-                      unselectedLabelStyle: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w500,
-                      ),
-                      onTap: cubit.changePage,
-                      elevation: 10,
+                    unselectedLabelStyle: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
                     ),
+                    onTap: cubit.changePage,
+                    elevation: 10,
                   ),
                 ),
               ),

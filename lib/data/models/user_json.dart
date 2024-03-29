@@ -1,18 +1,22 @@
 import 'package:triplaner/domain/entities/user.dart';
 
 class UserJson {
+  int? id;
   String? firstName;
   String? lastName;
   String? email;
-  String? id;
+  String? authType;
 
-  UserJson({this.firstName, this.lastName, this.email, this.id});
+
+  UserJson({this.firstName, this.lastName, this.email, this.id,this.authType});
 
   UserJson.fromJson(Map<String, dynamic> json) {
     firstName = json['firstName'];
     lastName = json['lastName'];
     email = json['email'];
     id = json['id'];
+    authType = json['authType'];
+
   }
 
   Map<String, dynamic> toJson() {
@@ -21,6 +25,7 @@ class UserJson {
     data['lastName'] = this.lastName;
     data['email'] = this.email;
     data['id'] = this.id;
+    data['authType'] = this.authType;
     return data;
   }
 
@@ -29,7 +34,7 @@ class UserJson {
       firstName: firstName??"N/A",
       lastName: lastName??"N/A",
       email: email??"N/A",
-      id: id??""
+      id: id.toString()
     );
   }
 }

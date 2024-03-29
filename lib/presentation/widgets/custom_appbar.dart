@@ -14,7 +14,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? action;
   final bool hideBack;
   final bool centerTitle;
-
+  final BorderRadius? radius;
   final int? actionFlex;
   final VoidCallback? onBack;
   const CustomAppBar({
@@ -25,6 +25,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.action,
     this.hideBack=false,
     this.centerTitle=false,
+    this.radius,
     this.actionFlex=1,
     this.onBack,
 
@@ -40,7 +41,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       padding: EdgeInsets.symmetric(horizontal: 24.w).copyWith(top: MediaQuery.of(context).viewPadding.top),
       decoration: BoxDecoration(
           gradient: AppStyle.linearGradient(),
-          borderRadius: BorderRadius.only(
+          borderRadius:radius??BorderRadius.only(
               bottomLeft: Radius.circular(13.r),
               bottomRight: Radius.circular(13.r))),
       child: titleWidget??Row(

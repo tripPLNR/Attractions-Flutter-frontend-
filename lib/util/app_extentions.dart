@@ -50,7 +50,10 @@ extension GlobalKeyExtension on GlobalKey {
 extension FormatStringToDate on String{
 
   formatToDateTime(){
-    return DateFormat('yyyy MM-dd').parse(this);
+    return DateFormat('yyyy MM-dd hh:mm').format(DateTime.parse(this));
+  }
+  formatToDate(){
+    return DateFormat('dd/MM/yyyy').format(DateTime.parse(this));
   }
 
   String toCamelCase(){
@@ -61,6 +64,26 @@ extension FormatStringToDate on String{
     String camelCase=words[0] + words.sublist(1).map((word) => word[0].toUpperCase() + word.substring(1)).join("").trim();
     return camelCase;
   }
+}
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+  }
+  String capitalizeFirstLetters() {
+    if (isEmpty) {
+      return this;
+    }
+    final words = split(' ');
+    final capitalizedWords = words.map((word) {
+      if (word.isNotEmpty) {
+        return '${word[0].toUpperCase()}${word.substring(1)}';
+      } else {
+        return word;
+      }
+    }).toList();
+    return capitalizedWords.join(' ');
+  }
+
 }
 
 
@@ -117,6 +140,23 @@ extension VariantListExtension on List<Variant> {
     }
 
     return foundVariant?.url;
+  }
+}
+
+
+extension IntExtentions on int {
+  String toTimeString() {
+    final int minutes = this ~/ 60;
+    final int seconds = this % 60;
+    final String minutesStr = (minutes % 60).toString().padLeft(2, '0');
+    final String secondsStr = seconds.toString().padLeft(2, '0');
+    return '$minutesStr:$secondsStr';
+  }
+  String formatDuration() {
+    final hours = this ~/ 3600;
+    final minutes = (this % 3600) ~/ 60;
+    final seconds = this % 60;
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 }
 

@@ -13,8 +13,6 @@ import 'package:triplaner/presentation/pages/main/activites/activities_initial_p
 import 'package:triplaner/presentation/pages/main/site_detail/site_detail_initial_params.dart';
 import 'package:triplaner/util/alert/app_snackbar.dart';
 import '../../../../domain/entities/site.dart';
-import '../../authentication/login/login_initial_params.dart';
-import '../../confirmation/confirmation_initial_params.dart';
 import 'search_initial_params.dart';
 import 'search_state.dart';
 import 'search_navigator.dart';
@@ -59,25 +57,37 @@ class SearchCubit extends BaseCubit<SearchState> {
     _getRecentSearches();
   }
 
-  onSearchAction() async {
+  onSearchAction(val) async {
     try {
-      _onType(txtSearch.text);
-      String search = txtSearch.text;
+      _onType(val);
+      String search = val.trim();
       if (search.isEmpty) return;
       if (search.length < 3) return;
-      emit(state.copyWith(loading: true));
+      emit(state.copyWith(loading: true,searchText: val));
       SearchSuggestion searchSuggestion =
           await databaseRepository.getSearchSuggestions(name: search);
 
       emit(state.copyWith(
           searchText: search,
           loading: false,
-          suggestedSites: searchSuggestion.attractions?.take(5).toList(),
-          suggestedLocations: searchSuggestion.location));
+          suggestedSites: state.searchText.isEmpty
+              ? []
+              : searchSuggestion.attractions?.take(5).toList(),
+          suggestedLocations:
+              state.searchText.isEmpty ? [] : searchSuggestion.location));
     } catch (e) {
       emit(state.copyWith(loading: false));
       snackBar.show(context: context, info: e.toString());
     }
+  }
+
+  clearTextField() {
+    txtSearch.text = "";
+    emit(state.copyWith(
+      showClearIcon: false,
+      suggestedLocations: [],
+      suggestedSites: [],
+    ));
   }
 
   clearSearch() {
@@ -107,12 +117,11 @@ class SearchCubit extends BaseCubit<SearchState> {
   onSuggestionTap(SearchLocation searchLocation) {
     _saveIntoRecentSearch(txtSearch.text ?? "");
     navigator.openActivities(ActivitiesInitialParams(
-        endpoint: APIEndpoint.getNearbySites,
-        title: "${searchLocation.cityName}",
-        parameters: {
-          "city": searchLocation.cityName?.split(",").first,
-          "country": searchLocation.cityName?.split(",").last,
-        }));
+      endpoint: "${APIEndpoint.getSitesOfCity}/${searchLocation.id}",
+      title: "${searchLocation.name}",
+      searchLocation: searchLocation,
+      showFilterButton: true,
+    ));
   }
 
   onSiteTap(Site site) {
@@ -121,6 +130,9 @@ class SearchCubit extends BaseCubit<SearchState> {
   }
 
   _onType(String txt) {
-    emit(state.copyWith(showClearIcon: txt.isNotEmpty));
+    emit(state.copyWith(
+        showClearIcon: txt.isNotEmpty,
+        suggestedSites: txt.isEmpty ? [] : state.suggestedSites,
+        suggestedLocations: txt.isEmpty ? [] : state.suggestedLocations));
   }
 }

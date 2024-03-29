@@ -10,54 +10,82 @@ class AppStyle {
         color: Theme.of(context).colorScheme.primary,
       );
 
-  static TextStyle headingH1(BuildContext context) => TextStyle(
-        fontSize: 22.sp,
-        fontWeight: FontWeight.w600,
+  static TextStyle accountTileHeading(BuildContext context) => TextStyle(
+        fontSize: 24.sp,
+        fontWeight: FontWeight.w700,
         color: Theme.of(context).colorScheme.onBackground,
-        fontFamily: AppTheme.montserratAlternates,
-        letterSpacing: 0
       );
 
-  static TextStyle headingH2(BuildContext context) => TextStyle(
-      fontSize: 23.sp,
-      fontWeight: FontWeight.w700,
-      color: Theme.of(context).colorScheme.onBackground,
-  );
-  static TextStyle siteDetailHeading(BuildContext context) => TextStyle(
-    fontSize: 22.sp,
-    fontWeight: FontWeight.w700,
-    color: Theme.of(context).colorScheme.onBackground,
-      letterSpacing: 0
-  );
-
-  static TextStyle siteDetailSubHeading(BuildContext context) => TextStyle(
-    fontSize: 20.sp,
-    fontWeight: FontWeight.w400,
-    color: Theme.of(context).colorScheme.onBackground,
-    letterSpacing: 0
-  );
-  static TextStyle headingH3(BuildContext context) => TextStyle(
-    fontSize: 16.sp,
-    fontWeight: FontWeight.w600,
-    height: 1.5,
-    color: Theme.of(context).colorScheme.onBackground,
-  );
-  static TextStyle bottomSheetHeading(BuildContext context) => TextStyle(
-      fontSize: 16.sp,
+  static TextStyle headingH1(BuildContext context) => TextStyle(
+      fontSize: 22.sp,
       fontWeight: FontWeight.w600,
       color: Theme.of(context).colorScheme.onBackground,
-  );
+      fontFamily: AppTheme.montserratAlternates,
+      letterSpacing: 0);
+
+  static TextStyle headingH2(BuildContext context) => TextStyle(
+        fontSize: 23.sp,
+        fontWeight: FontWeight.w700,
+        color: Theme.of(context).colorScheme.onBackground,
+      );
+
+  static TextStyle siteDetailHeading(BuildContext context) => TextStyle(
+        fontSize: 24.sp,
+        fontWeight: FontWeight.w700,
+        color: Theme.of(context).colorScheme.onBackground,
+        letterSpacing: 0,
+      );
+
+  static TextStyle siteDetailSubHeading(BuildContext context) => TextStyle(
+      fontSize: 20.sp,
+      fontWeight: FontWeight.w400,
+      color: Theme.of(context).colorScheme.onBackground,
+      letterSpacing: 0,
+      height: 1.5);
+
+  static TextStyle commentTextStyle(BuildContext context) => TextStyle(
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+      );
+
+  static TextStyle siteCardTileStyle(BuildContext context) => TextStyle(
+        fontSize: 20.sp,
+        fontWeight: FontWeight.w700,
+        color: Theme.of(context).colorScheme.onBackground,
+        letterSpacing: 0,
+      );
+
+  static TextStyle headingH3(BuildContext context) => TextStyle(
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w600,
+        height: 1.5,
+        color: Theme.of(context).colorScheme.onBackground,
+      );
+
+  static TextStyle bottomSheetHeading(BuildContext context) => TextStyle(
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w600,
+        color: Theme.of(context).colorScheme.onBackground,
+      );
 
   static TextStyle bottomSheetSubHeading(BuildContext context) => TextStyle(
-    fontSize: 14.sp,
-    fontWeight: FontWeight.w600,
-    color: Theme.of(context).colorScheme.onBackground,
-  );
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w600,
+        color: Theme.of(context).colorScheme.onBackground,
+      );
+
   static TextStyle authSubHeadingStyle(BuildContext context) => TextStyle(
         fontSize: 12.sp,
         fontWeight: FontWeight.w600,
         color: Theme.of(context).colorScheme.secondary,
       );
+
+  static TextStyle aboutUsTextStyle(BuildContext context) => TextStyle(
+      fontSize: 18.sp,
+      fontWeight: FontWeight.w500,
+      fontFamily: AppTheme.montserratAlternates,
+      color: Theme.of(context).colorScheme.onBackground.withOpacity(0.95));
 
   static BoxShadow boxShadow(context) => BoxShadow(
         color: Theme.of(context).colorScheme.onBackground.withOpacity(0.15),
@@ -72,7 +100,6 @@ class AppStyle {
   static TextStyle textFieldLabelStyle(BuildContext context) => TextStyle(
         fontSize: 14.sp,
         fontWeight: FontWeight.w500,
-
       );
 
   static TextStyle textFieldHintStyle(BuildContext context) => TextStyle(
@@ -80,6 +107,11 @@ class AppStyle {
       fontWeight: FontWeight.w400,
       color: Theme.of(context).colorScheme.tertiaryContainer // grey color
 
+      );
+
+  static TextStyle searchResultTextStyle(BuildContext context) => TextStyle(
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w600,
       );
 
   static TextStyle textFieldTextStyle(BuildContext context) => TextStyle(

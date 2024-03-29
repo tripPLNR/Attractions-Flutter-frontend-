@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:triplaner/domain/entities/review_rating.dart';
+import 'package:triplaner/domain/entities/product_review.dart';
 import 'package:triplaner/presentation/widgets/custom_appbar.dart';
 import 'package:triplaner/presentation/widgets/custom_single_child_scroll_view.dart';
 import 'package:triplaner/util/app_constant.dart';
@@ -48,11 +48,11 @@ class _ReviewsState extends State<ReviewsPage> {
           noMoreText: "No more reviews",
           noMoreRecord: state.noMoreRecord,
           onScrollEndReached: () {
-           cubit.getMoreReviews();
+
           },
           enableScrollUp: true,
           onLoadMore: () {
-            cubit.getMoreReviews();
+
           },
           child: Padding(
             padding: AppConstant.screenPadding.copyWith(top: 20.h),
@@ -63,8 +63,8 @@ class _ReviewsState extends State<ReviewsPage> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  ReviewRating reviewRating = state.loading
-                      ? ReviewRating.empty()
+                  ProductReview reviewRating = state.loading
+                      ? ProductReview.empty()
                       : state.reviewRating[index];
                   return ReviewWidget(
                     reviewRating: reviewRating,

@@ -1,0 +1,4 @@
+class CurrenciesInitialParams {
+
+const CurrenciesInitialParams();
+}

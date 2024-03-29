@@ -1,6 +1,8 @@
+import 'package:equatable/equatable.dart';
+
 import '../../entities/site.dart';
 
-class FilterStoreState {
+class FilterStoreState extends Equatable {
   final bool loading;
   final bool noMoreRecord;
 
@@ -18,7 +20,6 @@ class FilterStoreState {
   FilterStoreState({
     required this.loading,
     required this.noMoreRecord,
-
     required this.isFilterApplied,
     required this.selectedActivity,
     required this.priceMax,
@@ -31,7 +32,6 @@ class FilterStoreState {
   factory FilterStoreState.initial() => FilterStoreState(
       loading: false,
       noMoreRecord: false,
-
       isFilterApplied: false,
       selectedActivity: "",
       priceMin: 0,
@@ -43,7 +43,6 @@ class FilterStoreState {
   FilterStoreState copyWith({
     bool? loading,
     bool? noMoreRecord,
-
     bool? isFilterApplied,
     String? selectedActivity,
     double? priceMin,
@@ -64,4 +63,18 @@ class FilterStoreState {
             selectedCustomerReviewSorting ?? this.selectedCustomerReviewSorting,
         filteredSites: filteredSites ?? this.filteredSites,
       );
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+        loading,
+        noMoreRecord,
+        isFilterApplied,
+        selectedActivity,
+        priceMin,
+        priceMax,
+        selectedDuration,
+        selectedCustomerReviewSorting,
+        filteredSites,
+      ];
 }

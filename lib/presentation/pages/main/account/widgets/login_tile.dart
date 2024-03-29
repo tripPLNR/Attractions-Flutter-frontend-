@@ -3,47 +3,54 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoginTile extends StatelessWidget {
   final VoidCallback onLogin;
-  const LoginTile({Key? key,required this.onLogin}) : super(key: key);
+
+  const LoginTile({Key? key, required this.onLogin}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onLogin,
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 12.h),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Login",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 26.sp,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary),
+    return Padding(
+      padding: EdgeInsets.only(bottom: 20.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: onLogin,
+            child: Container(
+              width: 1.sw,
+              padding: EdgeInsets.symmetric(vertical: 22.h),
+              margin: EdgeInsets.symmetric(vertical: 10.h),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(30.r),
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Login or Signup",
+                      style: TextStyle(
+                        fontSize: 22.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    SizedBox(width: 20.w,),
+                    Icon(Icons.arrow_forward_ios_rounded,size: 18.r,
+                      color: Theme.of(context).colorScheme.primary,
+                    )
+                  ],
                 ),
-                Icon(
-                  Icons.arrow_forward_ios_sharp,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primary,
-                  size: 20.r,
-                ),
-              ],
+              ),
             ),
-            SizedBox(
-              height: 12.h,
-            ),
-            const Divider(
-              height: 0,
-              thickness: 1,
-            )
-          ],
-        ),
+          ),
+          SizedBox(height: 5.h,),
+          Container(
+            height: 5.h,
+            width: 1.sw,
+            color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+          )
+        ],
       ),
     );
   }

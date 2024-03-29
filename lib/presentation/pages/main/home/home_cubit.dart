@@ -7,6 +7,7 @@ import 'package:triplaner/domain/entities/top_activity.dart';
 import 'package:triplaner/domain/entities/user.dart';
 import 'package:triplaner/domain/repositories/database_repository.dart';
 import 'package:triplaner/domain/stores/bottom_nav_store.dart';
+import 'package:triplaner/domain/stores/currency_store.dart';
 import 'package:triplaner/domain/stores/user_store.dart';
 import 'package:triplaner/domain/stores/wishlist/wishlist_store.dart';
 import 'package:triplaner/network/api_endpoint.dart';
@@ -27,7 +28,7 @@ import 'home_initial_params.dart';
 import 'home_state.dart';
 import 'home_navigator.dart';
 
-class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
+class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState> {
   HomeNavigator navigator;
   HomeInitialParams initialParams;
   AppSnackBar snackBar;
@@ -35,7 +36,7 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
   LocationService locationService;
   WishListStore wishListStore;
   UserStore userStore;
-
+  CurrencyStore currencyStore;
   BottomNavStore bottomNavStore;
 
   HomeCubit({
@@ -47,6 +48,7 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
     required this.wishListStore,
     required this.bottomNavStore,
     required this.userStore,
+    required this.currencyStore,
   }) : super(HomeState.initial(initialParams: initialParams));
 
   @override
@@ -56,13 +58,13 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
     }
   }
 
-
   BuildContext get context => navigator.context;
 
   onInit() {
     _listenToWishList();
     _getAll();
     _getWishList();
+    _listenToCurrencyChange();
     emit(state.copyWith(showAppBar: false));
   }
 
@@ -75,8 +77,17 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
     _getMoreToExplore();
   }
 
+  refreshAction() {
+    _getPopularGateways(isRefresh: true);
+    _getSighSeeingTours(isRefresh: true);
+    _getTopActivities(isRefresh: true);
+    _getAttractionWorldWide(isRefresh: true);
+    _getWaterAdventures(isRefresh: true);
+    _getMoreToExplore(isRefresh: true);
+  }
+
   _getWishList() {
-    if (state.wishListSites.isEmpty&&userStore.state!=User.empty()) {
+    if (state.wishListSites.isEmpty && userStore.state != User.empty()) {
       databaseRepository.getMyWishListSites().then((value) {
         wishListStore.setWishList(value);
       }).onError((error, stackTrace) {
@@ -85,11 +96,11 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
     }
   }
 
-  _getPopularGateways() async {
+  _getPopularGateways({bool isRefresh = false}) async {
     try {
-      if (state.cities.isNotEmpty) return;
+      if (state.cities.isNotEmpty && !isRefresh) return;
       emit(state.copyWith(loadingPopularGateways: true));
-      List<City> cities = await databaseRepository.getPopularGateways();
+      List<City> cities = await databaseRepository.getPopularDestinations();
       emit(state.copyWith(loadingPopularGateways: false, cities: cities));
     } catch (e) {
       emit(state.copyWith(loadingPopularGateways: false));
@@ -98,9 +109,9 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
     }
   }
 
-  _getTopActivities() async {
+  _getTopActivities({bool isRefresh = false}) async {
     try {
-      if (state.topActivities.isNotEmpty) return;
+      if (state.topActivities.isNotEmpty && !isRefresh) return;
       emit(state.copyWith(loadingTopActivities: true));
       List<TopActivity> topActivities =
           await databaseRepository.getTopActivities();
@@ -113,9 +124,9 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
     }
   }
 
-  _getSighSeeingTours() async {
+  _getSighSeeingTours({bool isRefresh = false}) async {
     try {
-      if (state.siteSeeingTours.isNotEmpty) return;
+      if (state.siteSeeingTours.isNotEmpty && !isRefresh) return;
       emit(state.copyWith(loadingSiteSeeingTours: true));
       List<Site> sites = await databaseRepository.getSiteSeeingTours();
       emit(state.copyWith(
@@ -126,9 +137,9 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
     }
   }
 
-  _getAttractionWorldWide() async {
+  _getAttractionWorldWide({bool isRefresh = false}) async {
     try {
-      if (state.attractionsWorldWide.isNotEmpty) return;
+      if (state.attractionsWorldWide.isNotEmpty && !isRefresh) return;
       emit(state.copyWith(loadingAttractionWorldWide: true));
       List<Site> sites = await databaseRepository.getAttractionsWorldWide();
       emit(state.copyWith(
@@ -139,9 +150,9 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
     }
   }
 
-  _getWaterAdventures() async {
+  _getWaterAdventures({bool isRefresh = false}) async {
     try {
-      if (state.waterAdventures.isNotEmpty) return;
+      if (state.waterAdventures.isNotEmpty && !isRefresh) return;
       emit(state.copyWith(loadingWaterAdventures: true));
       List<Site> sites = await databaseRepository.getWaterAdventures();
       emit(state.copyWith(
@@ -152,9 +163,9 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
     }
   }
 
-  _getMoreToExplore() async {
+  _getMoreToExplore({bool isRefresh = false}) async {
     try {
-      if (state.moreToExplore.isNotEmpty) return;
+      if (state.moreToExplore.isNotEmpty && !isRefresh) return;
       emit(state.copyWith(loadingMoreToExplore: true));
       List<Site> sites = await databaseRepository.getMoreToExplore();
       emit(state.copyWith(loadingMoreToExplore: false, moreToExplore: sites));
@@ -170,9 +181,9 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
 
   activityAction(TopActivity activity) {
     navigator.openActivities(ActivitiesInitialParams(
-        endpoint: APIEndpoint.getTopActivityDetail,
-        parameters: {"activity": activity.name},
-        title: activity.name ?? "N/A"));
+      endpoint: "${APIEndpoint.getTopActivityDetail}/${activity.name}",
+      title: activity.name ?? "N/A",
+    ));
   }
 
   onNearbyAttraction() async {
@@ -181,11 +192,13 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
       LocationInfo locationInfo = await locationService.getCityName();
       emit(state.copyWith(stackLoading: false));
       navigator.openActivities(ActivitiesInitialParams(
-          endpoint: APIEndpoint.getNearbySitesByLatLong,
+          endpoint: APIEndpoint.getNearbyAttractions,
           title: locationInfo.city ?? locationInfo.country ?? "N/A",
+          latitude: locationInfo.latitude,
+          longitude: locationInfo.longitude,
           parameters: {
-            "latitude": locationInfo.latitude.toString(),
-            "longitude": locationInfo.longitude.toString()
+            "lat": locationInfo.latitude.toString(),
+            "lng": locationInfo.longitude.toString()
           }));
     } catch (e) {
       emit(state.copyWith(stackLoading: false));
@@ -195,7 +208,7 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
 
   onGuidedTour() {
     navigator.openActivities(ActivitiesInitialParams(
-        endpoint: APIEndpoint.getGuidedTours, title: "Guided & Private tours"));
+        endpoint: APIEndpoint.getGuidedTours, title: "Guided & Private tours",showNearbyButton: true));
   }
 
   seeMoreAction() {
@@ -204,7 +217,6 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
   }
 
   onSiteTap(Site site) {
-    debugPrint(site.cancellationPolicy?.toJson().toString());
     navigator.openSiteDetail(SiteDetailInitialParams(site: site));
   }
 
@@ -219,28 +231,32 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
     });
   }
 
+  _listenToCurrencyChange() {
+    currencyStore.stream.listen((event) {
+      refreshAction();
+    });
+  }
+
   bool isBookMarked(Site site) {
     return state.wishListSites.contains(site);
   }
 
-
   void onBookMarkTap(Site site) {
     if (userStore.state == User.empty()) {
       navigator.openConfirmation(ConfirmationInitialParams(
-        title: "",
-        subtitle: "Login or Create free account to add to the Wishlist.",
-        btnText: "Login",
-        btnAction: (){
-          navigator.openLogin(const LoginInitialParams());
-        }
-      ));
+          title: "",
+          subtitle: "Login or Create free account to add to the Wishlist.",
+          btnText: "Login",
+          btnAction: () {
+            navigator.openLogin(const LoginInitialParams());
+          }));
       return;
     }
     if (isBookMarked(site)) {
-      wishListStore.removeFromWishList(site,context);
+      wishListStore.removeFromWishList(site, context);
       databaseRepository.addOrRemoveFromWishList(siteId: site.id!);
     } else {
-      wishListStore.addIntoWishList(site,context);
+      wishListStore.addIntoWishList(site, context);
       databaseRepository.addOrRemoveFromWishList(siteId: site.id!);
     }
   }
@@ -249,6 +265,4 @@ class HomeCubit extends BaseCubit<HomeState> with ConnectivityMixin<HomeState>{
     debugPrint("tapped");
     bottomNavStore.changeScreen(1);
   }
-
-
 }

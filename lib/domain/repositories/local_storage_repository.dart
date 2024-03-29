@@ -1,3 +1,4 @@
+import 'package:triplaner/domain/entities/app_currency.dart';
 import 'package:triplaner/domain/entities/user.dart';
 
 abstract class LocalStorageRepository {
@@ -8,6 +9,9 @@ abstract class LocalStorageRepository {
   Future<User?> getUser();
 
   Future<bool> saveUser(User user);
+  Future<bool> saveCurrency(AppCurrency currency);
+  Future<AppCurrency> getCurrency();
+
 
   Future<bool> saveRecentSearch({required String search});
 

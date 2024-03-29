@@ -24,16 +24,6 @@ class SearchSuggestionJson {
     }
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.location != null) {
-      data['location'] = this.location!.map((v) => v.toJson()).toList();
-    }
-    if (this.attractions != null) {
-      data['attractions'] = this.attractions!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
 
   SearchSuggestion toDomain(){
     return SearchSuggestion(

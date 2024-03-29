@@ -29,35 +29,36 @@ class SiteDetailInfo extends StatelessWidget {
               Text(
                 "${site.title}",
                 style: TextStyle(
-                  fontSize: 22.sp,
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.w700,
                 ),
-                maxLines: 4,
+                maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
-              site.isRefundAvailable()?
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 6.h),
-                child: Text(
-                  "free cancellation",
-                  style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.primary),
-                ),
-              )
+              site.isRefundAvailable()
+                  ? Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.h),
+                      child: Text(
+                        "free cancellation",
+                        style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                    )
                   : const SizedBox(),
-              SizedBox(height: 4.h,),
+              SizedBox(
+                height: 4.h,
+              ),
               Row(
                 children: [
                   CustomStarRating(
                     ignoreGesture: true,
-                    rating: site.ratings?.ratings ?? 0,
+                    rating: site.totalRating??0,
                     size: 25.h,
-
                   ),
                   Text.rich(TextSpan(
-                      text: " ${site.ratings?.ratings}",
+                      text: " ${site.totalRating??0}",
                       style: TextStyle(
                         fontSize: 23.sp,
                         fontWeight: FontWeight.w500,
@@ -65,7 +66,7 @@ class SiteDetailInfo extends StatelessWidget {
                       ),
                       children: [
                         TextSpan(
-                          text: "(${site.ratings?.reviewersCount} reviews)",
+                          text: "(${site.totalReviews??0} reviews)",
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
@@ -88,11 +89,12 @@ class SiteDetailInfo extends StatelessWidget {
                     timeSize: 18.sp,
                   ),
                   PriceWidget(
-                      fromSize: 16.sp,
-                      priceSize: 27.sp,
-                      priceWeight: FontWeight.w800,
-                      fromWeight: FontWeight.w400,
-                      price: "${site.basePrice}")
+                    fromSize: 16.sp,
+                    priceSize: 27.sp,
+                    priceWeight: FontWeight.w800,
+                    fromWeight: FontWeight.w400,
+                    site: site,
+                  )
                 ],
               ),
 

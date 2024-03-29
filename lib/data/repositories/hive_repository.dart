@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:triplaner/domain/entities/app_currency.dart';
 import 'package:triplaner/domain/entities/user.dart';
 
 import '../../domain/repositories/local_storage_repository.dart';
@@ -15,6 +16,8 @@ class HiveRepository implements LocalStorageRepository{
   final authBox="authenticationBox";
   final cardBox="cardBox";
   final recentSearchBox="recentSearchBox";
+  final settingBox="settingBox";
+
 
 
 
@@ -94,6 +97,21 @@ class HiveRepository implements LocalStorageRepository{
   Future<bool> clearRecentSearch() async {
     var box = await Hive.openBox<String>(recentSearchBox);
     box.clear();
+    return true;
+  }
+
+  @override
+  Future<AppCurrency> getCurrency() async {
+    var box = await Hive.openBox(settingBox);
+    String response=await box.get('currency')??"";
+    if(response.isEmpty) return  AppCurrency.defaultCurrency();
+    return AppCurrency.fromJson(await json.decode(response));
+  }
+
+  @override
+  Future<bool> saveCurrency(AppCurrency currency) async {
+    var box = await Hive.openBox(settingBox);
+    await box.put('currency',json.encode(currency.toJson()));
     return true;
   }
 

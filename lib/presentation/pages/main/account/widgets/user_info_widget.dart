@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:triplaner/domain/entities/user.dart';
+import 'package:triplaner/util/app_extentions.dart';
 
 class UserInfoWidget extends StatelessWidget {
   final User user;
@@ -9,7 +10,7 @@ class UserInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h),
+      padding: EdgeInsets.only(top: 20.h),
       child: Column(
         children: [
           Row(
@@ -17,7 +18,7 @@ class UserInfoWidget extends StatelessWidget {
               CircleAvatar(
                 radius: 28.r,
                 backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.15),
-                child: Text(user.firstName.toString().substring(0,2).toUpperCase(),
+                child: Text("${user.firstName?[0]}${user.lastName?[0]}".toUpperCase(),
                   style: TextStyle(color: Theme.of(context).colorScheme.primary,
                       fontSize: 25.sp,
                       fontWeight: FontWeight.w700,
@@ -26,18 +27,10 @@ class UserInfoWidget extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 10.w,),
-              // SizedBox(
-              //   width:1.sw-100.w,
-              //   child: Text("${user.email}",style: TextStyle(
-              //       fontSize: 24.sp,
-              //       fontWeight: FontWeight.bold,
-              //     overflow: TextOverflow.ellipsis
-              //   ),),
-              // ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${user.firstName} ${user.lastName}",style: TextStyle(
+                  Text("${user.firstName.toString().capitalize()} ${user.lastName}",style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 24.sp,
                     color: Theme.of(context).colorScheme.onBackground

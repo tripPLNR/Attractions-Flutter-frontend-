@@ -24,7 +24,7 @@ class ClockAndHourWidget extends StatelessWidget {
           width: 4.w,
         ),
         Text(
-          "${site.duration?.hours} hours",
+          "${site.durationHours??0} hours",
           style: TextStyle(
               fontWeight: FontWeight.w600,
             fontSize: timeSize,

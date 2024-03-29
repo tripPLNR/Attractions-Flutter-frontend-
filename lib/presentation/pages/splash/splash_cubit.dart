@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:triplaner/domain/usecases/start_currency_session_usecase.dart';
 import 'package:triplaner/presentation/base_cubit/base_cubit.dart';
 import 'package:triplaner/presentation/base_cubit/internet_connectivity_cubit.dart';
 import 'package:triplaner/presentation/pages/main/bottom_navigation/bottom_navigation_initial_params.dart';
@@ -17,12 +18,14 @@ class SplashCubit extends BaseCubit<SplashState> with ConnectivityMixin {
   SplashInitialParams initialParams;
   AppSnackBar snackBar;
   CheckUserLoginUseCase checkUserLoginUseCase;
-
+  StartCurrencySessionUseCase startCurrencySessionUseCase;
   SplashCubit({
     required this.navigator,
     required this.initialParams,
     required this.snackBar,
     required this.checkUserLoginUseCase,
+    required this.startCurrencySessionUseCase,
+
   }) : super(SplashState.initial(initialParams: initialParams));
 
   BuildContext get context => navigator.context;
@@ -43,8 +46,9 @@ class SplashCubit extends BaseCubit<SplashState> with ConnectivityMixin {
         navigator.openNoInternet(const NoInternetInitialParams());
         return;
       }
-      await Future.delayed(const Duration(seconds: 1));
+      // await Future.delayed(const Duration(seconds: 1));
       await checkUserLoginUseCase.execute();
+     // await startCurrencySessionUseCase.execute();
       emit(state.copyWith(loading: false));
       close();
       navigator.openBottomNavigation(const BottomNavigationInitialParams());

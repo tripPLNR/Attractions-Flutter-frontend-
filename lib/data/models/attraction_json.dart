@@ -9,7 +9,7 @@ class AttractionJson {
   AttractionJson({this.name, this.sites});
 
   AttractionJson.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
+    name = json['name']??json['attractionName'];
     if (json['data'] != null) {
       sites = <SiteJson>[];
       json['data'].forEach((v) {
@@ -18,14 +18,6 @@ class AttractionJson {
     }
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
-    if (this.sites != null) {
-      data['data'] = this.sites!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
   Attraction toDomain(){
     return Attraction(
       name: name,

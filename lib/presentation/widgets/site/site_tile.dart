@@ -9,6 +9,7 @@ import 'package:triplaner/presentation/widgets/price_widget.dart';
 import 'package:triplaner/util/app_assets.dart';
 import 'package:triplaner/util/app_constant.dart';
 import 'package:triplaner/util/app_extentions.dart';
+import 'package:triplaner/util/app_style.dart';
 
 import '../custom_bookmark.dart';
 import 'rating_and_review_widget.dart';
@@ -61,9 +62,9 @@ class SiteTile extends StatelessWidget {
             Stack(
               children: [
                 Hero(
-                  tag: '${site.images?.first.variants!.getUrlBySize()}',
+                  tag: '${site.coverImage}',
                   child: CustomCacheImage(
-                    imgUrl: "${site.images?.first.variants!.getUrlBySize()}",
+                    imgUrl: "${site.coverImage}",
                     height:AppConstant.horizontalTileCardHeight,
                     radius: 12.r,
                     width: 123.w,
@@ -104,10 +105,8 @@ class SiteTile extends StatelessWidget {
                       ),
                       Text(
                         "${site.title}",
-                        style: TextStyle(
-                          fontSize: 17.sp,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0
+                        style: AppStyle.siteCardTileStyle(context).copyWith(
+                          fontSize: 17.sp
                         ),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
@@ -119,8 +118,8 @@ class SiteTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       RatingAndReviewWidget(
-                          rating: site.ratings?.ratings ?? 0,
-                          reviews: site.ratings?.reviewersCount ?? 0,
+                          rating: site.totalRating?? 0,
+                          reviews: site.totalReviews ?? 0,
                           starSize: 20.h,
                       ),
                       SizedBox(
@@ -135,7 +134,7 @@ class SiteTile extends StatelessWidget {
                               timeSize: 14.sp,
                           ),
                           PriceWidget(
-                            price: "${site.basePrice}",
+                            site: site,
                             fromSize:16.sp,
                             priceSize:26.sp,
                           ),

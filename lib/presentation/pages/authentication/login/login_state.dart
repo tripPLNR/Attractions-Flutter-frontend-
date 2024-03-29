@@ -1,6 +1,8 @@
+import 'package:equatable/equatable.dart';
+
 import 'login_initial_params.dart';
 
-class LoginState {
+class LoginState extends Equatable{
   final bool loading;
   final bool isPasswordVisible;
   final bool socialLogging;
@@ -21,4 +23,10 @@ class LoginState {
         isPasswordVisible: isPasswordVisible ?? this.isPasswordVisible,
         socialLogging: socialLogging ?? this.socialLogging,
       );
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+    loading,isPasswordVisible,socialLogging
+  ];
 }

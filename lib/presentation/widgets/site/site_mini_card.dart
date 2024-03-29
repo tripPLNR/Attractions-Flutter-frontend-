@@ -8,6 +8,7 @@ import 'package:triplaner/presentation/widgets/price_widget.dart';
 import 'package:triplaner/util/app_assets.dart';
 import 'package:triplaner/util/app_colors.dart';
 import 'package:triplaner/util/app_extentions.dart';
+import 'package:triplaner/util/app_style.dart';
 
 import '../custom_bookmark.dart';
 import '../custom_cache_image.dart';
@@ -53,9 +54,9 @@ class SiteMiniCard extends StatelessWidget {
                 Stack(
                   children: [
                     Hero(
-                      tag: '${site.images?.first.variants!.getUrlBySize()}',
+                      tag:site.coverImage??"",
                       child: CustomCacheImage(
-                        imgUrl:"${site.images?.first.variants!.getUrlBySize()}",
+                        imgUrl:site.coverImage??"",
                         height: gridviewMode ? 148.h : 190.h,
                         radius: 12.r,
                         width: 1.sw,
@@ -84,10 +85,9 @@ class SiteMiniCard extends StatelessWidget {
                 ),
                 Text(
                   "${site.title}",
-                  style: TextStyle(
-                      fontSize: gridviewMode?14.sp:18.sp,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0),
+                  style: AppStyle.siteCardTileStyle(context).copyWith(
+                    fontSize: gridviewMode?14.sp:18.sp,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -98,8 +98,8 @@ class SiteMiniCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 RatingAndReviewWidget(
-                  rating: site.ratings?.ratings ?? 0,
-                  reviews: site.ratings?.reviewersCount ?? 0,
+                  rating: site.totalRating?? 0,
+                  reviews: site.totalReviews?? 0,
                   oneStarMode: gridviewMode,
                   starSize: gridviewMode?20.h:25.h,
                   ratingSize:gridviewMode?14.sp:18.sp ,
@@ -113,7 +113,7 @@ class SiteMiniCard extends StatelessWidget {
                       timeSize: gridviewMode?12.sp:14.sp
                     ),
                     PriceWidget(
-                      price: "${site.basePrice}",
+                      site: site,
                       fromSize:gridviewMode?11.sp:16.sp,
                       priceSize: gridviewMode?14.sp:26.sp,
                     ),

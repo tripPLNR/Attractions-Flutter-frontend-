@@ -5,6 +5,8 @@ class AppConstant {
   static double horizontalPadding = 19.w;
   static double authTopPadding = 22.h;
 
+  static String get placeHolderImage=>"https://craftsnippets.com/articles_images/placeholder/placeholder.jpg";
+
   static EdgeInsets screenPadding = EdgeInsets.only(
     left: 16.w,
     right: 16.w,

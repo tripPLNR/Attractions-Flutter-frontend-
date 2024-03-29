@@ -56,118 +56,94 @@ class _ActivitiesState extends State<ActivitiesPage> {
         },
         builder: (context, state) {
           return Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.background,
+            backgroundColor: (!state.loading && state.sites.isEmpty)
+                ? Theme.of(context).colorScheme.surface
+                : Theme.of(context).colorScheme.background,
             appBar: CustomAppBar(
               title: state.title,
               actionFlex: 1,
               action: [
-                GestureDetector(
-                    onTap: cubit.openCalendarAction,
-                    child: SvgPicture.asset(AppAssets.circularCalendar)),
+                // GestureDetector(
+                //     onTap: cubit.openCalendarAction,
+                //     child: SvgPicture.asset(AppAssets.circularCalendar)),
               ],
             ),
-            body: CustomSingleChildScrollViewWithLoadMore(
-              isEmpty: state.sites.isEmpty,
-              enableScrollUp: true,
-              noMoreRecord: state.noMoreSites,
-              onScrollDown: () {
-                cubit.updateFilterButtonVisibility(false);
-              },
-              onScrollUp: () {
-                cubit.updateFilterButtonVisibility(true);
-              },
-              onScrollEndReached: () {
-                cubit.onScrollReachesEndGetRecord();
-              },
-              onLoadMore: () {
-                cubit.getNextRecordAccordingToFilter();
-              },
-              isLoadingMore: state.loadingMore,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 12.h,
-                  ),
-
-                  /// top menu for filter and all other stuff
-                  // SizedBox(
-                  //   height: 32.h,
-                  //   child: Skeletonizer(
-                  //     enabled: state.loading,
-                  //     child: ListView.builder(
-                  //       itemCount: cubit.menu.length,
-                  //       scrollDirection: Axis.horizontal,
-                  //       padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  //       itemBuilder: (context, index) {
-                  //         return CustomChip(
-                  //           title: cubit.menu[index]['title'],
-                  //           assetPath: cubit.menu[index]['iconPath'],
-                  //           onTap: () {
-                  //             cubit.onFilterTap(index);
-                  //           },
-                  //         );
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
-                  // Padding(
-                  //   padding: EdgeInsets.symmetric(vertical: 10.h),
-                  //   child: const Divider(
-                  //     thickness: 1,
-                  //     height: 0,
-                  //   ),
-                  // ),
-                  // Padding(
-                  //   padding: AppConstant.screenPadding,
-                  //   child: Text("250 activities ",style: TextStyle(
-                  //     fontSize: 14.sp,
-                  //     fontWeight: FontWeight.w600
-                  //   ),),
-                  // ),
-                  // SizedBox(height: 10.h,),
-                  Skeletonizer(
-                    enabled: state.loading,
-                    child: ListView.builder(
-                      itemCount: state.loading ? 5 : state.sites.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.symmetric(horizontal: 8.w),
-                      itemBuilder: (context, index) {
-                        Site site =
-                            state.loading ? Site.empty() : state.sites[index];
-                        return SiteCard(
-                          site: site,
-                          isBookMarked: cubit.isBookMarked(site),
-                          onBookMarkTap: () {
-                            cubit.onBookMarkTap(site);
-                          },
-                          onTap: () {
-                            cubit.onTapAction(site);
-                          },
-                        );
-                      },
+            body: (!state.loading && state.sites.isEmpty)
+                ? Center(
+                    child: SvgPicture.asset(
+                      AppAssets.noRecordExist,
+                    ),
+                  )
+                : CustomSingleChildScrollViewWithLoadMore(
+                    isEmpty: state.sites.isEmpty,
+                    enableScrollUp: true,
+                    noMoreRecord: state.noMoreSites,
+                    onScrollEndReached: () {
+                      cubit.onScrollReachesEndGetRecord();
+                    },
+                    onLoadMore: () {
+                      cubit.getNextRecordAccordingToFilter();
+                    },
+                    isLoadingMore: state.loadingMore,
+                    filterAction:
+                        cubit.initialParams.showFilterButton?cubit.openFilterPage:null,
+                    child: Skeletonizer(
+                      enabled: state.loading,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding:
+                                AppConstant.screenPadding.copyWith(top: 15.h),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "${state.totalActivities} activities found",
+                                  style: TextStyle(
+                                      fontSize: 14.sp,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiaryContainer),
+                                ),
+                                Visibility(
+                                  visible: cubit.initialParams.showNearbyButton,
+                                  child: GestureDetector(
+                                      onTap: state.loading?null:cubit.getNearbyAttraction,
+                                      child:
+                                          SvgPicture.asset(AppAssets.nearbyGps)),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 15.h,
+                          ),
+                          ListView.builder(
+                            itemCount: state.loading ? 5 : state.sites.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            itemBuilder: (context, index) {
+                              Site site = state.loading
+                                  ? Site.empty()
+                                  : state.sites[index];
+                              return SiteCard(
+                                site: site,
+                                isBookMarked: cubit.isBookMarked(site),
+                                onBookMarkTap: () {
+                                  cubit.onBookMarkTap(site);
+                                },
+                                onTap: () {
+                                  cubit.onTapAction(site);
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            floatingActionButton: state.showFilterButton
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CustomChip(
-                        title: "Activities & filters",
-                        assetPath: AppAssets.filter,
-                        onTap: () {
-                          cubit.openFilterPage();
-                        },
-                      ),
-                    ],
-                  )
-                : null,
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
           );
         });
   }

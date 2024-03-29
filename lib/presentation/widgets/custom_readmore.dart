@@ -24,7 +24,7 @@ class CustomReadMore extends StatelessWidget {
               letterSpacing: 0),
       trimMode: TrimMode.Line,
       trimCollapsedText: 'Read more',
-      trimExpandedText: 'Show less',
+      trimExpandedText: ' Show less',
       callback:callback,
       moreStyle: TextStyle(
           fontSize: 13.sp,

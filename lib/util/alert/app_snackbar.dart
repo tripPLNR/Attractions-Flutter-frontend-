@@ -25,7 +25,7 @@ class AppSnackBar{
           children: [
              Icon(getLeadingIcon(snackBarType),color:Colors.white,),
             SizedBox(width: 10.w,),
-            Text(info,style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.bold),),
+            Expanded(child: Text(info,style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.bold),)),
           ],
         ),
         backgroundColor: getColor(snackBarType),

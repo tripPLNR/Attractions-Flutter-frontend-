@@ -26,7 +26,7 @@ class LoginUseCase{
 
     /// TODO: SAVE LOCALLY
     await localStorageRepository.saveUser(login.user!);
-    await localStorageRepository.saveAccessToken(login.accessToken!);
+    await localStorageRepository.saveAccessToken(login.token!);
 
     wishListStore.getWishList();
     /// TODO: TIMER FOR REFRESH TOKEN

@@ -49,12 +49,12 @@ class _DestinationDetailState extends State<DestinationDetailPage> {
           return Scaffold(
             backgroundColor: Theme.of(context).colorScheme.background,
             appBar: CustomAppBar(
-              title: "${state.city.name}, ${state.city.country}",
+              title: "${state.city.cityName}, ${state.city.countryName}",
               actionFlex: 1,
               action: [
-                GestureDetector(
-                    onTap: cubit.openCalendarAction,
-                    child: SvgPicture.asset(AppAssets.circularCalendar)),
+                // GestureDetector(
+                //     onTap: cubit.openCalendarAction,
+                //     child: SvgPicture.asset(AppAssets.circularCalendar)),
               ],
             ),
             body: CustomSingleChildScrollViewWithLoadMore(
@@ -147,7 +147,18 @@ class _DestinationDetailState extends State<DestinationDetailPage> {
                             );
                           }),
                     ),
-                    title("Uncover more"),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        title("Uncover more"),
+                        Padding(
+                          padding: AppConstant.screenPadding,
+                          child: Text("${state.unCoverCount} activities",style: TextStyle(fontSize: 14.sp,
+                          color: Theme.of(context).colorScheme.secondary
+                          ),),
+                        )
+                      ],
+                    ),
                     Skeletonizer(
                       enabled: state.loadingUncover,
                       child: ListView.builder(

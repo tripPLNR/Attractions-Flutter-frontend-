@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:triplaner/presentation/widgets/custon_safe_area.dart';
 import 'package:triplaner/util/app_funtions.dart';
 import 'package:triplaner/util/app_style.dart';
 import '../../../../util/app_assets.dart';
@@ -80,7 +81,7 @@ class _ForgetPasswordState extends State<ForgetPasswordPage> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "Enter your email address and we will send a link to reset your password",
+                        "Enter your registered email address and we’ll send you OTP to reset you password",
                         style: AppStyle.authSubHeadingStyle(context),
                       ),
                     ),

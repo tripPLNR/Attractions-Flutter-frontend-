@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,7 +25,6 @@ class _SplashState extends State<SplashPage> {
   void initState() {
     super.initState();
     cubit.navigator.context = context;
-    cubit.onInit();
   }
 
   @override
@@ -32,10 +32,44 @@ class _SplashState extends State<SplashPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
-    child: SvgPicture.asset(
-      AppAssets.logo,
-      height: 97.h,
-    ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset(
+              AppAssets.splashLogo,
+              height: 60.h,
+            ),
+            SizedBox(height: 10.h,),
+            DefaultTextStyle(
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16.sp,
+                    color: Theme.of(context).colorScheme.onPrimary
+                ),
+              textAlign: TextAlign.center,
+              child: AnimatedTextKit(
+                isRepeatingAnimation: false,
+                animatedTexts: [
+                  TypewriterAnimatedText('Discover, plan and conquer',
+                  speed: const Duration(milliseconds: 70),
+                    textAlign: TextAlign.center
+                  ),
+                ],
+                onFinished: (){
+                  cubit.onInit();
+                },
+                onTap: () {
+                  print("Tap Event");
+                },
+              ),
+            ),
+            // Text("Discover, plan and conquer",style: TextStyle(
+            //   fontWeight: FontWeight.w500,
+            //   fontSize: 16.sp,
+            //   color: Theme.of(context).colorScheme.onPrimary
+            // ),),
+          ],
+        ),
       ),
     );
   }

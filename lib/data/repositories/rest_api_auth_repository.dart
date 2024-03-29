@@ -22,27 +22,31 @@ class RestAPIAuthRepository implements AuthRepository {
       required String lastName,
       required String email,
       required String password}) async {
-    var response =
-        await networkRepository.post(APIEndpoint.registerWithEmailAndPassword, {
-      "email": email,
-      "password": password,
-      "firstName": firstName,
-      "lastName": lastName,
-      "type": "user"
-    });
+    var response = await networkRepository.post(
+      APIEndpoint.registerWithEmailAndPassword,
+      {
+        "firstName": firstName,
+        "lastName": lastName,
+        "email": email,
+        "password": password,
+        "authType": "userAuth"
+      },
+      getFullResponse: true,
+    );
     return LoginJson.fromJson(response).toDomain();
   }
 
   @override
   Future<Login> loginWithEmailAndPassword(
       {required String email, required String password}) async {
-    debugPrint("email : ${email}");
-    debugPrint("password : ${password}");
-    var response =
-        await networkRepository.post(APIEndpoint.loginWithEmailAndPassword, {
-      "email": email,
-      "password": password,
-    });
+    var response = await networkRepository.post(
+      APIEndpoint.loginWithEmailAndPassword,
+      {
+        "email": email,
+        "password": password,
+      },
+      getFullResponse: true,
+    );
 
     return LoginJson.fromJson(response).toDomain();
   }
@@ -58,15 +62,25 @@ class RestAPIAuthRepository implements AuthRepository {
   Future<Login> loginWithGoogle() async {
     GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
     if (googleSignInAccount != null) {
+      GoogleSignInAuthentication authentication =
+          await googleSignInAccount.authentication;
       debugPrint(
-          "======> GOT GOOGLE INFORMATION : EMAIL: ${googleSignInAccount.email}, NAME : ${googleSignInAccount.displayName}");
-      var response = await networkRepository.post(APIEndpoint.socialLogin, {
-        "email": googleSignInAccount.email,
-        "firstName": googleSignInAccount.displayName?.split(" ").first,
-        "lastName": googleSignInAccount.displayName?.split(" ").last
-      }, parameters: {
-        "type": "google"
-      });
+          "======> GOT GOOGLE INFORMATION : EMAIL: ${googleSignInAccount.email}");
+      debugPrint(
+          "======> GOT GOOGLE INFORMATION : ACCESS TOKEN: ${authentication.accessToken}");
+      debugPrint(
+          "======> GOT GOOGLE INFORMATION : ID TOKEN: ${authentication.idToken}");
+
+      var response = await networkRepository.post(
+        APIEndpoint.socialLogin,
+        {
+          "email": googleSignInAccount.email,
+          "firstName": googleSignInAccount.displayName?.split(" ").first,
+          "lastName": googleSignInAccount.displayName?.split(" ").last,
+          "authType": "google",
+        },
+        getFullResponse: true,
+      );
       return LoginJson.fromJson(response).toDomain();
     }
     throw "Something went wrong ${googleSignInAccount?.serverAuthCode}";
@@ -109,20 +123,38 @@ class RestAPIAuthRepository implements AuthRepository {
     }
     debugPrint("======> GOT APPLE INFORMATION : EMAIL: $email, NAME : $name");
 
-    var response = await networkRepository.post(APIEndpoint.socialLogin, {
-      "email": email,
-      "firstName": name.split(" ").first,
-      "lastName": name.split(" ").last
-    }, parameters: {
-      "type": "apple"
-    });
+    var response = await networkRepository.post(
+      APIEndpoint.socialLogin,
+      {
+        "email": email,
+        "firstName": name.split(" ").first,
+        "lastName": name.split(" ").last,
+        "authType": "apple",
+      },
+      getFullResponse: true,
+    );
     return LoginJson.fromJson(response).toDomain();
   }
 
   @override
-  Future<bool> forgetPassword({required String email}) async {
-    await networkRepository.post(APIEndpoint.forgetPassword, {"email": email});
-    return true;
+  Future<int> forgetPassword({required String email}) async {
+    var response = await networkRepository.post(APIEndpoint.forgetPassword, {"email": email});
+    return response['userId'];
+  }
+
+  @override
+  Future<void> verifyOTP({required String otp, required String userId}) async {
+    await networkRepository.put("${APIEndpoint.verifyOTP}/$userId", {"otp": int.parse(otp)});
+
+  }
+
+  @override
+  Future<void> resetPassword(
+      {required String newPassword,
+      required String confirmPassword,
+      required String userId}) async {
+    await networkRepository.put("${APIEndpoint.resetPassword}/$userId",
+        {"newPassword": newPassword, "confirmPassword": confirmPassword});
   }
 
   @override

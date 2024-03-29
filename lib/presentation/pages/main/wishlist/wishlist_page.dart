@@ -87,7 +87,7 @@ class _WishlistState extends State<WishlistPage> {
                         )
                       : ListView.builder(
                           itemCount: state.sites.length,
-                          padding: AppConstant.screenPadding.copyWith(top: 8.h),
+                          padding: AppConstant.screenPadding.copyWith(top: 8.h).copyWith(bottom: 65.h),
                           itemBuilder: (context, index) {
                             Site site = state.sites[index];
                             return Padding(

@@ -1,10 +1,11 @@
+import 'package:equatable/equatable.dart';
 import 'package:triplaner/domain/entities/search_location.dart';
 import 'package:triplaner/domain/entities/site.dart';
 
 import '../../../../domain/entities/search_suggestion.dart';
 import 'search_initial_params.dart';
 
-class SearchState {
+class SearchState extends Equatable {
   final bool loading;
   final bool showClearIcon;
 
@@ -35,16 +36,15 @@ class SearchState {
         recentSearches: [],
       );
 
-  SearchState copyWith(
-          {bool? loading,
-          bool? showClearIcon,
-          String? searchText,
-          List<Site>? suggestedSites,
-          List<Site>? wishListSites,
-          List<SearchLocation>? suggestedLocations,
-          List<String>? recentSearches,
-
-          }) =>
+  SearchState copyWith({
+    bool? loading,
+    bool? showClearIcon,
+    String? searchText,
+    List<Site>? suggestedSites,
+    List<Site>? wishListSites,
+    List<SearchLocation>? suggestedLocations,
+    List<String>? recentSearches,
+  }) =>
       SearchState(
         loading: loading ?? this.loading,
         showClearIcon: showClearIcon ?? this.showClearIcon,
@@ -53,6 +53,17 @@ class SearchState {
         suggestedLocations: suggestedLocations ?? this.suggestedLocations,
         wishListSites: wishListSites ?? this.wishListSites,
         recentSearches: recentSearches ?? this.recentSearches,
-
       );
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+        loading,
+        showClearIcon,
+        searchText,
+        suggestedSites,
+        suggestedLocations,
+        wishListSites,
+        recentSearches,
+      ];
 }
